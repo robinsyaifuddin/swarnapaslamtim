@@ -15,6 +15,7 @@ import { lampungTimurDestinations } from '@/data/lampungTimurDestinations';
 // Data destinasi wisata resmi Lampung Timur
 const allDestinations = lampungTimurDestinations.map(dest => ({
   id: dest.id,
+  slug: dest.slug,
   name: dest.name,
   image: dest.image_url,
   location: dest.location,

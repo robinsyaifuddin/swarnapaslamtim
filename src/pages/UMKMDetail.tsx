@@ -58,6 +58,7 @@ interface Review {
 }
 interface UMKM {
   id: number;
+  slug: string;
   name: string;
   image: string;
   category: string;
@@ -84,20 +85,28 @@ const UMKMDetail = () => {
   const [rating, setRating] = useState(5);
   const [userName, setUserName] = useState('');
   const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const {
     toast
   } = useToast();
   const isMobile = useIsMobile();
   useEffect(() => {
-    // Fetch UMKM data based on slug
-    const foundUmkm = umkmData.find(item => item.slug === slug);
-    if (foundUmkm) {
-      setUmkm(foundUmkm);
-    }
-
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0);
+    setIsLoading(true);
+    // Small delay to ensure smooth transition
+    const timer = setTimeout(() => {
+      // Fetch UMKM data based on slug
+      const foundUmkm = umkmData.find(item => item.slug === slug);
+      if (foundUmkm) {
+        setUmkm(foundUmkm);
+      }
+      setIsLoading(false);
+      
+      // Scroll to top when component mounts
+      window.scrollTo(0, 0);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [slug]);
   const handleAddToCart = (productId: number) => {
     toast({
@@ -201,6 +210,16 @@ Terima kasih.`;
     });
     navigate(`/umkm/product-payment?${params.toString()}`);
   };
+  
+  if (isLoading) {
+    return <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">Memuat UMKM...</p>
+        </div>
+      </div>;
+  }
+  
   if (!umkm) {
     return <div className="min-h-screen bg-white">
         <Navbar />

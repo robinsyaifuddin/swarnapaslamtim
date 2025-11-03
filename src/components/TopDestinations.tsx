@@ -17,6 +17,7 @@ import { lampungTimurDestinations } from '@/data/lampungTimurDestinations';
 // Top 4 destinasi wisata unggulan Lampung Timur
 const topDestinations = lampungTimurDestinations.slice(0, 4).map(dest => ({
   id: dest.id,
+  slug: dest.slug,
   name: dest.name,
   image: dest.image_url,
   location: dest.location,
@@ -33,8 +34,8 @@ export const TopDestinations = () => {
     navigate('/destinasi');
   };
   
-  const handleViewDestination = (id: number) => {
-    navigate(`/destinasi/detail?id=${id}`);
+  const handleViewDestination = (slug: string) => {
+    navigate(`/destinasi/${slug}`);
   };
 
   return (
@@ -93,7 +94,7 @@ export const TopDestinations = () => {
                 variant="ghost" 
                 size="sm"
                 className="text-primary hover:text-primary hover:bg-primary/10 p-0 h-auto font-medium"
-                onClick={() => handleViewDestination(destination.id)}
+                onClick={() => handleViewDestination(destination.slug)}
               >
                 Learn more →
               </Button>

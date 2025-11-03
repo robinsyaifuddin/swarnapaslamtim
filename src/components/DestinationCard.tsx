@@ -9,6 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DestinationCardProps {
   id: number;
+  slug: string;
   name: string;
   image: string;
   location: string;
@@ -20,6 +21,7 @@ interface DestinationCardProps {
 
 export const DestinationCard: React.FC<DestinationCardProps> = ({
   id,
+  slug,
   name,
   image,
   location,
@@ -35,7 +37,7 @@ export const DestinationCard: React.FC<DestinationCardProps> = ({
     if (onViewDetails) {
       onViewDetails();
     } else {
-      navigate(`/destinasi/detail?id=${id}`);
+      navigate(`/destinasi/${slug}`);
     }
   };
 

@@ -71,6 +71,7 @@ const tourEvents = [{
 // Data destinasi wisata lengkap Lampung Timur dengan detail komprehensif
 const destinations = lampungTimurDestinations.map(dest => ({
   id: dest.id,
+  slug: dest.slug,
   name: dest.name,
   description: dest.description,
   longDescription: dest.longDescription || dest.description + "\n\nDestinasi wisata ini merupakan salah satu yang populer di Lampung Timur dengan fasilitas yang lengkap dan akses yang mudah dijangkau. Cocok untuk dikunjungi bersama keluarga atau teman.",

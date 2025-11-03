@@ -33,42 +33,50 @@ const Navbar = () => {
   }, [location]);
 
   // Mock search results
-  const searchResults = [{
-    id: 1,
-    category: 'Destinasi',
-    name: 'Pantai Tanjung Putus',
-    url: '/destinasi/detail?id=1'
-  }, {
-    id: 2,
-    category: 'Destinasi',
-    name: 'Air Terjun Way Lalaan',
-    url: '/destinasi/detail?id=2'
-  }, {
-    id: 3,
-    category: 'UMKM',
-    name: 'Kopi Lamsel',
-    url: '/umkm/detail?id=1'
-  }, {
-    id: 4,
-    category: 'UMKM',
-    name: 'Batik Lamsel',
-    url: '/umkm/detail?id=2'
-  }, {
-    id: 5,
-    category: 'Kecamatan',
-    name: 'Kalianda',
-    url: '/kecamatan?id=1'
-  }, {
-    id: 6,
-    category: 'Agenda',
-    name: 'Festival Krakatau',
-    url: '/agenda?id=1'
-  }, {
-    id: 7,
-    category: 'Informasi',
-    name: 'Berita Terbaru Lamsel',
-    url: '/informasi/detail?id=1'
-  }];
+  const searchResults = [
+    {
+      id: 1,
+      category: 'Destinasi',
+      name: 'Taman Nasional Way Kambas',
+      url: '/destinasi/taman-nasional-way-kambas'
+    },
+    {
+      id: 2,
+      category: 'Destinasi',
+      name: 'Pantai Kuala Kambas',
+      url: '/destinasi/pantai-kuala-kambas'
+    },
+    {
+      id: 3,
+      category: 'UMKM',
+      name: 'Lampung Ethnica - Kain Tapis',
+      url: '/umkm/lampung-ethnica-kain-tapis-lampung'
+    },
+    {
+      id: 4,
+      category: 'UMKM',
+      name: 'Kopi Lampung Timur Premium',
+      url: '/umkm/kopi-lampung-timur-premium'
+    },
+    {
+      id: 5,
+      category: 'Kecamatan',
+      name: 'Kalianda',
+      url: '/kecamatan?id=1'
+    },
+    {
+      id: 6,
+      category: 'Agenda',
+      name: 'Festival Krakatau',
+      url: '/agenda?id=1'
+    },
+    {
+      id: 7,
+      category: 'Informasi',
+      name: 'Berita Terbaru Lamsel',
+      url: '/informasi/detail?id=1'
+    }
+  ];
 
   // Filter results based on search query
   const filteredResults = searchResults.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));

@@ -142,6 +142,7 @@ const Destinasi = () => {
               <DestinationCard
                 key={destination.id}
                 id={destination.id}
+                slug={destination.slug}
                 name={destination.name}
                 image={destination.image}
                 location={destination.location}

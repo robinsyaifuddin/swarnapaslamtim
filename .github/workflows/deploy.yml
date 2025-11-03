@@ -28,7 +28,7 @@ jobs:
       run: npm run build
       env:
         NODE_ENV: production
-        BASE_PATH: /swarnapas/
+        VITE_BASE_PATH: /webdesafajarbaru/
         
     - name: Add .nojekyll file and handle SPA routing
       run: |

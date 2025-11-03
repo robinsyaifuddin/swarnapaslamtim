@@ -30,7 +30,8 @@ import {
   Users,
   Facebook,
   Instagram,
-  Globe
+  Globe,
+  ImageOff
 } from 'lucide-react';
 
 // Define TypeScript interfaces for our data structures

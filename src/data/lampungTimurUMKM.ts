@@ -175,6 +175,7 @@ export const lampungTimurUMKM = [{
   image: "",
   category: "Kuliner",
   location: "Labuhan Maringgai, Lampung Timur",
+  address: "Jl. Nelayan Sejahtera No. 23, Labuhan Maringgai, Lampung Timur",
   phone: "+62 822-9600-0004",
   email: "ikanasinlampungtimur@example.com",
   description: "Produsen ikan asin berkualitas dari hasil laut Lampung Timur. Proses penjemuran alami menggunakan sinar matahari untuk cita rasa terbaik.",
@@ -188,18 +189,39 @@ export const lampungTimurUMKM = [{
   products: [{
     id: 401,
     name: "Ikan Asin Selar 500gr",
-    price: "Rp 35.000",
-    description: "Ikan asin selar berkualitas premium"
+    price: 35000,
+    image: "",
+    description: "Ikan asin selar berkualitas premium",
+    inStock: true
   }, {
     id: 402,
     name: "Ikan Asin Teri 250gr",
-    price: "Rp 45.000",
-    description: "Teri medan kualitas super"
+    price: 45000,
+    image: "",
+    description: "Teri medan kualitas super",
+    inStock: true
   }, {
     id: 403,
     name: "Ikan Asin Peda 500gr",
-    price: "Rp 40.000",
-    description: "Ikan peda asin gurih khas pesisir"
+    price: 40000,
+    image: "",
+    description: "Ikan peda asin gurih khas pesisir",
+    inStock: true
+  }],
+  reviews: [{
+    id: 401,
+    userName: "Dedi Prasetyo",
+    rating: 5,
+    date: "2024-10-27",
+    comment: "Ikan asinnya segar dan tidak bau. Kualitas terbaik dari Lampung Timur!",
+    userImage: "https://i.pravatar.cc/150?img=8"
+  }, {
+    id: 402,
+    userName: "Sri Wahyuni",
+    rating: 4,
+    date: "2024-10-23",
+    comment: "Ikan asinnya enak dan harga terjangkau. Sudah langganan.",
+    userImage: "https://i.pravatar.cc/150?img=10"
   }]
 }, {
   id: 5,
@@ -208,6 +230,7 @@ export const lampungTimurUMKM = [{
   image: "",
   category: "Kuliner",
   location: "Sukadana, Lampung Timur",
+  address: "Jl. Raya Sukadana No. 89, Sukadana, Lampung Timur",
   phone: "+62 823-0700-0005",
   email: "sambaldaprmak@example.com",
   description: "Produsen sambal khas Lampung dengan berbagai varian pedas menggunakan cabai lokal berkualitas dan bumbu pilihan tanpa pengawet.",
@@ -220,19 +243,40 @@ export const lampungTimurUMKM = [{
   },
   products: [{
     id: 501,
-    name: "Sambal Teri Medan",
-    price: "Rp 35.000/200gr",
-    description: "Sambal teri medan pedas gurih"
+    name: "Sambal Teri Medan 200gr",
+    price: 35000,
+    image: "",
+    description: "Sambal teri medan pedas gurih",
+    inStock: true
   }, {
     id: 502,
-    name: "Sambal Bawang",
-    price: "Rp 30.000/200gr",
-    description: "Sambal bawang khas Lampung"
+    name: "Sambal Bawang 200gr",
+    price: 30000,
+    image: "",
+    description: "Sambal bawang khas Lampung",
+    inStock: true
   }, {
     id: 503,
-    name: "Sambal Ikan Roa",
-    price: "Rp 45.000/200gr",
-    description: "Sambal ikan roa super pedas"
+    name: "Sambal Ikan Roa 200gr",
+    price: 45000,
+    image: "",
+    description: "Sambal ikan roa super pedas",
+    inStock: true
+  }],
+  reviews: [{
+    id: 501,
+    userName: "Linda Sari",
+    rating: 5,
+    date: "2024-10-29",
+    comment: "Sambalnya enak banget! Pedas dan gurih. Cocok untuk lauk makan.",
+    userImage: "https://i.pravatar.cc/150?img=6"
+  }, {
+    id: 502,
+    userName: "Hendra Wijaya",
+    rating: 5,
+    date: "2024-10-24",
+    comment: "Sambal terenak yang pernah saya coba. Sudah beli berkali-kali.",
+    userImage: "https://i.pravatar.cc/150?img=2"
   }]
 }, {
   id: 6,
@@ -241,6 +285,7 @@ export const lampungTimurUMKM = [{
   image: "",
   category: "Kerajinan",
   location: "Way Bungur, Lampung Timur",
+  address: "Jl. Pasar Way Bungur No. 34, Way Bungur, Lampung Timur",
   phone: "+62 812-1800-0006",
   email: "anyamanbambu@example.com",
   description: "Pengrajin anyaman bambu dengan produk berkualitas tinggi. Setiap produk dibuat dengan tangan oleh pengrajin berpengalaman menggunakan bambu pilihan.",
@@ -253,19 +298,40 @@ export const lampungTimurUMKM = [{
   },
   products: [{
     id: 601,
-    name: "Bakul Bambu Set",
-    price: "Rp 75.000 - Rp 150.000",
-    description: "Set bakul bambu berbagai ukuran"
+    name: "Bakul Bambu Set (3 pcs)",
+    price: 125000,
+    image: "",
+    description: "Set bakul bambu berbagai ukuran",
+    inStock: true
   }, {
     id: 602,
     name: "Tas Anyaman Bambu",
-    price: "Rp 125.000",
-    description: "Tas anyaman bambu modern dan unik"
+    price: 125000,
+    image: "",
+    description: "Tas anyaman bambu modern dan unik",
+    inStock: true
   }, {
     id: 603,
     name: "Lampu Hias Bambu",
-    price: "Rp 200.000",
-    description: "Lampu hias dengan anyaman bambu artistik"
+    price: 200000,
+    image: "",
+    description: "Lampu hias dengan anyaman bambu artistik",
+    inStock: true
+  }],
+  reviews: [{
+    id: 601,
+    userName: "Putri Anggraini",
+    rating: 5,
+    date: "2024-10-26",
+    comment: "Kerajinan bambu yang sangat indah dan rapi. Kualitas bagus!",
+    userImage: "https://i.pravatar.cc/150?img=11"
+  }, {
+    id: 602,
+    userName: "Agus Setiawan",
+    rating: 4,
+    date: "2024-10-21",
+    comment: "Tas bambunya unik dan kuat. Cocok untuk oleh-oleh.",
+    userImage: "https://i.pravatar.cc/150?img=4"
   }]
 }, {
   id: 7,
@@ -274,6 +340,7 @@ export const lampungTimurUMKM = [{
   image: "",
   category: "Kerajinan",
   location: "Melinting, Lampung Timur",
+  address: "Jl. Raya Melinting No. 56, Melinting, Lampung Timur",
   phone: "+62 813-2900-0007",
   email: "batiklampung@example.com",
   description: "Pengrajin batik dengan motif khas Lampung yang menggabungkan simbol Siger dan budaya lokal. Setiap kain dibuat dengan teknik cap dan tulis tradisional.",
@@ -287,18 +354,39 @@ export const lampungTimurUMKM = [{
   products: [{
     id: 701,
     name: "Kain Batik Tulis Motif Siger",
-    price: "Rp 450.000",
-    description: "Batik tulis dengan motif Siger khas Lampung"
+    price: 450000,
+    image: "",
+    description: "Batik tulis dengan motif Siger khas Lampung",
+    inStock: true
   }, {
     id: 702,
     name: "Kain Batik Cap",
-    price: "Rp 175.000",
-    description: "Batik cap dengan berbagai motif tradisional"
+    price: 175000,
+    image: "",
+    description: "Batik cap dengan berbagai motif tradisional",
+    inStock: true
   }, {
     id: 703,
     name: "Kemeja Batik Pria",
-    price: "Rp 275.000",
-    description: "Kemeja batik siap pakai untuk pria"
+    price: 275000,
+    image: "",
+    description: "Kemeja batik siap pakai untuk pria",
+    inStock: true
+  }],
+  reviews: [{
+    id: 701,
+    userName: "Nita Maharani",
+    rating: 5,
+    date: "2024-10-28",
+    comment: "Batiknya sangat indah dan berkualitas. Motif Sigernya khas Lampung!",
+    userImage: "https://i.pravatar.cc/150?img=12"
+  }, {
+    id: 702,
+    userName: "Rudi Hartono",
+    rating: 5,
+    date: "2024-10-25",
+    comment: "Kemeja batiknya nyaman dipakai dan motifnya unik. Recommended!",
+    userImage: "https://i.pravatar.cc/150?img=13"
   }]
 }, {
   id: 8,
@@ -307,6 +395,7 @@ export const lampungTimurUMKM = [{
   image: "",
   category: "Kuliner",
   location: "Braja Slebah, Lampung Timur",
+  address: "Jl. Way Kambas No. 12, Braja Slebah, Lampung Timur",
   phone: "+62 821-4000-0008",
   email: "maduwaykambas@example.com",
   description: "Madu hutan alami dari kawasan Way Kambas. Dipanen langsung dari lebah hutan liar tanpa campuran bahan kimia, 100% murni dan berkhasiat.",
@@ -320,17 +409,38 @@ export const lampungTimurUMKM = [{
   products: [{
     id: 801,
     name: "Madu Hutan Murni 500ml",
-    price: "Rp 150.000",
-    description: "Madu hutan murni tanpa campuran"
+    price: 150000,
+    image: "",
+    description: "Madu hutan murni tanpa campuran",
+    inStock: true
   }, {
     id: 802,
     name: "Madu Hutan 1L",
-    price: "Rp 275.000",
-    description: "Kemasan ekonomis untuk keluarga"
+    price: 275000,
+    image: "",
+    description: "Kemasan ekonomis untuk keluarga",
+    inStock: true
   }, {
     id: 803,
     name: "Propolis Cair 30ml",
-    price: "Rp 85.000",
-    description: "Propolis alami dari lebah hutan"
+    price: 85000,
+    image: "",
+    description: "Propolis alami dari lebah hutan",
+    inStock: true
+  }],
+  reviews: [{
+    id: 801,
+    userName: "Maya Kusuma",
+    rating: 5,
+    date: "2024-10-30",
+    comment: "Madu asli dan berkhasiat. Rasanya manis alami dan tidak ada campuran.",
+    userImage: "https://i.pravatar.cc/150?img=14"
+  }, {
+    id: 802,
+    userName: "Fadli Rahman",
+    rating: 5,
+    date: "2024-10-27",
+    comment: "Madu murni dari Way Kambas. Kualitas terjamin dan harga pas.",
+    userImage: "https://i.pravatar.cc/150?img=15"
   }]
 }];

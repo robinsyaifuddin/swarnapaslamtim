@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { Menu, Search, User, X, ChevronDown } from 'lucide-react';
+import { Menu, Search, User, X, TrendingUp, MapPin, Store, Building2, FileText } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
+import { generateSearchData, getPopularSearches, searchItems, type SearchItem } from '@/utils/searchData';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,6 +16,10 @@ const Navbar = () => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Generate search data once
+  const allSearchData = useMemo(() => generateSearchData(), []);
+  const popularSearches = useMemo(() => getPopularSearches(), []);
 
   // Update scrolled state based on scroll position
   useEffect(() => {
@@ -32,62 +37,59 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location]);
 
-  // Mock search results
-  const searchResults = [
-    {
-      id: 1,
-      category: 'Destinasi',
-      name: 'Taman Nasional Way Kambas',
-      url: '/destinasi/taman-nasional-way-kambas'
-    },
-    {
-      id: 2,
-      category: 'Destinasi',
-      name: 'Pantai Kuala Kambas',
-      url: '/destinasi/pantai-kuala-kambas'
-    },
-    {
-      id: 3,
-      category: 'UMKM',
-      name: 'Lampung Ethnica - Kain Tapis',
-      url: '/umkm/lampung-ethnica-kain-tapis-lampung'
-    },
-    {
-      id: 4,
-      category: 'UMKM',
-      name: 'Kopi Lampung Timur Premium',
-      url: '/umkm/kopi-lampung-timur-premium'
-    },
-    {
-      id: 5,
-      category: 'Kecamatan',
-      name: 'Kalianda',
-      url: '/kecamatan?id=1'
-    },
-    {
-      id: 6,
-      category: 'Agenda',
-      name: 'Festival Krakatau',
-      url: '/agenda?id=1'
-    },
-    {
-      id: 7,
-      category: 'Informasi',
-      name: 'Berita Terbaru Lamsel',
-      url: '/informasi/detail?id=1'
+  // Search with intelligent filtering
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return [];
     }
-  ];
-
-  // Filter results based on search query
-  const filteredResults = searchResults.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    return searchItems(searchQuery, allSearchData);
+  }, [searchQuery, allSearchData]);
+  
+  // Show popular searches when no query
+  const showPopular = !searchQuery.trim();
+  
+  // Group results by category
+  const groupedResults = useMemo(() => {
+    const groups: Record<string, SearchItem[]> = {
+      'Destinasi': [],
+      'UMKM': [],
+      'Kecamatan': [],
+      'Informasi': []
+    };
+    
+    searchResults.forEach(item => {
+      if (groups[item.category]) {
+        groups[item.category].push(item);
+      }
+    });
+    
+    return groups;
+  }, [searchResults]);
   
   const handleSearchSelect = (url: string) => {
     setIsSearchOpen(false);
+    setSearchQuery('');
     navigate(url);
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
+  };
+  
+  // Get category icon
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'Destinasi':
+        return <MapPin className="w-4 h-4" />;
+      case 'UMKM':
+        return <Store className="w-4 h-4" />;
+      case 'Kecamatan':
+        return <Building2 className="w-4 h-4" />;
+      case 'Informasi':
+        return <FileText className="w-4 h-4" />;
+      default:
+        return <Search className="w-4 h-4" />;
+    }
   };
 
   // Function to handle navigation and scroll to top
@@ -273,26 +275,109 @@ const Navbar = () => {
       {/* Search Dialog */}
       <CommandDialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
         <Command className="rounded-lg border border-gray-200 shadow-xl">
-          <div className="border-b border-gray-100 bg-gray-50/50">
-            <CommandInput placeholder="Cari destinasi, UMKM, agenda..." value={searchQuery} onValueChange={setSearchQuery} className="border-none focus:ring-0 text-gray-800 placeholder:text-gray-500 bg-transparent h-12" autoFocus />
+          <div className="border-b border-gray-100 bg-gradient-to-r from-primary/5 to-primary/10">
+            <CommandInput 
+              placeholder="Cari destinasi wisata, UMKM, kecamatan, informasi..." 
+              value={searchQuery} 
+              onValueChange={setSearchQuery} 
+              className="border-none focus:ring-0 text-gray-800 placeholder:text-gray-500 bg-transparent h-14 text-base" 
+              autoFocus 
+            />
           </div>
-          <CommandList className="max-h-80 overflow-y-auto bg-white">
-            <CommandEmpty className="py-8 text-center text-gray-500">
-              <div className="flex flex-col items-center space-y-2">
-                <Search className="w-8 h-8 text-gray-300" />
-                <span>Pencarian tidak ditemukan</span>
-              </div>
-            </CommandEmpty>
-            <CommandGroup heading="Hasil Pencarian" className="p-2">
-              {filteredResults.map((result, index) => (
-                <CommandItem key={result.id} onSelect={() => handleSearchSelect(result.url)} className="flex items-center p-3 m-1 rounded-lg hover:bg-blue-50 cursor-pointer transition-all duration-200 stagger-item stagger-delay-1 border border-transparent hover:border-blue-100">
-                  <div className="flex flex-col w-full">
-                    <span className="font-medium text-gray-900">{result.name}</span>
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full w-fit mt-1">{result.category}</span>
+          <CommandList className="max-h-[500px] overflow-y-auto bg-white">
+            {showPopular ? (
+              // Show popular searches when no query
+              <>
+                <CommandGroup heading="🔥 Pencarian Populer" className="p-3">
+                  {popularSearches.map((item) => (
+                    <CommandItem 
+                      key={item.id} 
+                      onSelect={() => handleSearchSelect(item.url)} 
+                      className="flex items-center gap-3 p-3 m-1 rounded-lg hover:bg-primary/10 cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                        {getCategoryIcon(item.category)}
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <span className="font-semibold text-gray-900 truncate">{item.title}</span>
+                        <span className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                          <TrendingUp className="w-3 h-3" />
+                          {item.category}
+                        </span>
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <CommandSeparator />
+                <div className="p-4 text-center text-sm text-gray-500">
+                  <p className="mb-2 font-medium">💡 Saran Pencarian:</p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {['Pantai', 'Kopi', 'Tapis', 'Kuliner', 'Wisata Alam'].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => setSearchQuery(suggestion)}
+                        className="px-3 py-1 bg-gray-100 hover:bg-primary/10 text-gray-700 rounded-full text-xs transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
                   </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
+                </div>
+              </>
+            ) : searchResults.length > 0 ? (
+              // Show search results grouped by category
+              <>
+                {Object.entries(groupedResults).map(([category, items]) => 
+                  items.length > 0 && (
+                    <CommandGroup key={category} heading={`${category} (${items.length})`} className="p-2">
+                      {items.map((item) => (
+                        <CommandItem 
+                          key={item.id} 
+                          onSelect={() => handleSearchSelect(item.url)} 
+                          className="flex items-center gap-3 p-3 m-1 rounded-lg hover:bg-primary/10 cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20"
+                        >
+                          <div className="flex-shrink-0 w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                            {getCategoryIcon(item.category)}
+                          </div>
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <span className="font-medium text-gray-900 truncate">{item.title}</span>
+                            {item.description && (
+                              <span className="text-xs text-gray-500 truncate mt-0.5">
+                                {item.description.substring(0, 60)}...
+                              </span>
+                            )}
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )
+                )}
+              </>
+            ) : (
+              // No results found
+              <CommandEmpty className="py-12 text-center">
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Search className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-700">Tidak ada hasil untuk "{searchQuery}"</p>
+                    <p className="text-sm text-gray-500 mt-1">Coba gunakan kata kunci lain</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2 justify-center mt-4">
+                    {['Destinasi', 'UMKM', 'Kecamatan'].map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => setSearchQuery(suggestion)}
+                        className="px-3 py-1 bg-gray-100 hover:bg-primary/10 text-gray-700 rounded-full text-xs transition-colors"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </CommandEmpty>
+            )}
           </CommandList>
         </Command>
       </CommandDialog>

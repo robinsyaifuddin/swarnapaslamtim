@@ -1,31 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MapPin, Users, Building, Landmark, Phone, Mail, Globe, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { MapPin, Users, Building, Landmark, Phone, Mail, Globe, ChevronDown } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { lampungTimurDistricts } from '@/data/lampungTimurDistricts';
 
 // Data 24 kecamatan resmi di Kabupaten Lampung Timur
 const districts = lampungTimurDistricts;
+
+// Memoized district detail component for performance
+const DistrictDetail = memo(({ district }: { district: any }) => {
+  return (
+    <div className="relative mb-6 h-64 overflow-hidden rounded-xl">
+      <img 
+        src={district.image} 
+        alt={district.name} 
+        className="h-full w-full object-cover"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 p-6">
+        <h2 className="text-3xl font-bold text-white">Kecamatan {district.name}</h2>
+      </div>
+    </div>
+  );
+});
+
+DistrictDetail.displayName = 'DistrictDetail';
+
 const Kecamatan = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeDistrict, setActiveDistrict] = useState(districts[0]);
-  const [filteredDistricts, setFilteredDistricts] = useState(districts);
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    if (term.trim() === '') {
-      setFilteredDistricts(districts);
-    } else {
-      const filtered = districts.filter(district => district.name.toLowerCase().includes(term.toLowerCase()));
-      setFilteredDistricts(filtered);
-    }
-  };
-  const handleDistrictClick = (district: any) => {
-    setActiveDistrict(district);
+  const [selectedDistrictId, setSelectedDistrictId] = useState(districts[0].id.toString());
+  
+  // Use useMemo to avoid unnecessary recalculation
+  const activeDistrict = useMemo(() => {
+    return districts.find(d => d.id.toString() === selectedDistrictId) || districts[0];
+  }, [selectedDistrictId]);
+  
+  // Memoized sorted districts for dropdown
+  const sortedDistricts = useMemo(() => {
+    return [...districts].sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+  
+  const handleDistrictChange = (value: string) => {
+    setSelectedDistrictId(value);
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -35,25 +55,43 @@ const Kecamatan = () => {
       <Navbar />
       
       {/* Page Header */}
-      <div className="pt-20 bg-lamsel-red text-white">
-        
+      <div className="pt-20 pb-8 bg-gradient-to-br from-primary to-primary/80">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Kecamatan Lampung Timur</h1>
+          <p className="text-white/90 text-lg">Jelajahi 24 kecamatan di Kabupaten Lampung Timur</p>
+        </div>
       </div>
       
       {/* District Detail Section */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Left Side - District Detail */}
-          <div className="lg:col-span-2">
-            <div className="relative mb-6 h-64 overflow-hidden rounded-xl">
-              <img src={activeDistrict.image} alt={activeDistrict.name} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 p-6">
-                <h2 className="text-3xl font-bold text-white">Kecamatan {activeDistrict.name}</h2>
-              </div>
-            </div>
+        {/* Dropdown Selector for Districts */}
+        <div className="mb-8 max-w-xl mx-auto">
+          <label className="block text-sm font-medium mb-2">Pilih Kecamatan:</label>
+          <Select value={selectedDistrictId} onValueChange={handleDistrictChange}>
+            <SelectTrigger className="w-full h-12 text-lg">
+              <SelectValue placeholder="Pilih kecamatan..." />
+            </SelectTrigger>
+            <SelectContent className="max-h-[400px]">
+              {sortedDistricts.map((district) => (
+                <SelectItem 
+                  key={district.id} 
+                  value={district.id.toString()}
+                  className="text-base py-3"
+                >
+                  Kecamatan {district.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-8">
+          {/* District Detail */}
+          <div>
+            <DistrictDetail district={activeDistrict} />
             
-            <Tabs defaultValue="profile">
-              <TabsList className="grid w-full grid-cols-4">
+            <Tabs defaultValue="profile" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                 <TabsTrigger value="profile">Profil</TabsTrigger>
                 <TabsTrigger value="contact">Kontak</TabsTrigger>
                 <TabsTrigger value="attractions">Wisata</TabsTrigger>
@@ -74,28 +112,28 @@ const Kecamatan = () => {
                     </p>
                     
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div className="flex flex-col items-center rounded-lg bg-gray-50 p-4 text-center">
-                        <Users className="mb-2 h-8 w-8 text-lamsel-red" />
+                      <div className="flex flex-col items-center rounded-lg bg-primary/5 p-4 text-center transition-all hover:bg-primary/10">
+                        <Users className="mb-2 h-8 w-8 text-primary" />
                         <span className="text-sm text-gray-500">Populasi</span>
                         <span className="text-lg font-semibold">{activeDistrict.population}</span>
                       </div>
                       
-                      <div className="flex flex-col items-center rounded-lg bg-gray-50 p-4 text-center">
-                        <Building className="mb-2 h-8 w-8 text-lamsel-red" />
+                      <div className="flex flex-col items-center rounded-lg bg-primary/5 p-4 text-center transition-all hover:bg-primary/10">
+                        <Building className="mb-2 h-8 w-8 text-primary" />
                         <span className="text-sm text-gray-500">Jumlah Desa</span>
                         <span className="text-lg font-semibold">{activeDistrict.totalVillages}</span>
                       </div>
                       
-                      <div className="flex flex-col items-center rounded-lg bg-gray-50 p-4 text-center">
-                        <MapPin className="mb-2 h-8 w-8 text-lamsel-red" />
+                      <div className="flex flex-col items-center rounded-lg bg-primary/5 p-4 text-center transition-all hover:bg-primary/10">
+                        <MapPin className="mb-2 h-8 w-8 text-primary" />
                         <span className="text-sm text-gray-500">Luas Wilayah</span>
                         <span className="text-lg font-semibold">{activeDistrict.area}</span>
                       </div>
                     </div>
                     
-                    <div className="rounded-lg border p-4">
+                    <div className="rounded-lg border p-4 bg-primary/5">
                       <div className="flex items-center">
-                        <Landmark className="mr-2 h-5 w-5 text-lamsel-red" />
+                        <Landmark className="mr-2 h-5 w-5 text-primary" />
                         <span className="font-medium">Camat:</span>
                         <span className="ml-2">{activeDistrict.leader}</span>
                       </div>
@@ -114,27 +152,27 @@ const Kecamatan = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-start">
-                      <MapPin className="mr-2 h-5 w-5 shrink-0 text-lamsel-red" />
+                      <MapPin className="mr-2 h-5 w-5 shrink-0 text-primary" />
                       <span>{activeDistrict.address}</span>
                     </div>
                     
                     <div className="flex items-center">
-                      <Phone className="mr-2 h-5 w-5 text-lamsel-red" />
+                      <Phone className="mr-2 h-5 w-5 text-primary" />
                       <span>{activeDistrict.phone}</span>
                     </div>
                     
                     <div className="flex items-center">
-                      <Mail className="mr-2 h-5 w-5 text-lamsel-red" />
+                      <Mail className="mr-2 h-5 w-5 text-primary" />
                       <span>{activeDistrict.email}</span>
                     </div>
                     
                     <div className="flex items-center">
-                      <Globe className="mr-2 h-5 w-5 text-lamsel-red" />
+                      <Globe className="mr-2 h-5 w-5 text-primary" />
                       <span>{activeDistrict.website}</span>
                     </div>
                     
                     <div className="mt-4">
-                      <Button className="bg-lamsel-red hover:bg-lamsel-red/80">
+                      <Button className="bg-primary hover:bg-primary/90">
                         Hubungi Kecamatan
                       </Button>
                     </div>
@@ -152,8 +190,8 @@ const Kecamatan = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {activeDistrict.attractions.map((attraction, index) => <div key={index} className="flex items-center rounded-lg border p-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-lamsel-red/10 text-lamsel-red">
+                      {activeDistrict.attractions.map((attraction: string, index: number) => <div key={index} className="flex items-center rounded-lg border p-3 hover:bg-primary/5 transition-colors">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
                             {index + 1}
                           </div>
                           <span className="ml-3">{attraction}</span>
@@ -173,8 +211,8 @@ const Kecamatan = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {activeDistrict.products.map((product, index) => <div key={index} className="flex items-center rounded-lg border p-3">
-                          <div className="h-3 w-3 rounded-full bg-lamsel-red"></div>
+                      {activeDistrict.products.map((product: string, index: number) => <div key={index} className="flex items-center rounded-lg border p-3 hover:bg-primary/5 transition-colors">
+                          <div className="h-3 w-3 rounded-full bg-primary"></div>
                           <span className="ml-3">{product}</span>
                         </div>)}
                     </div>
@@ -182,37 +220,6 @@ const Kecamatan = () => {
                 </Card>
               </TabsContent>
             </Tabs>
-          </div>
-          
-          {/* Right Side - District List */}
-          <div>
-            <div className="mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <Input type="text" placeholder="Cari kecamatan..." className="pl-10" value={searchTerm} onChange={handleSearch} />
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              {filteredDistricts.map(district => <Card key={district.id} className={`cursor-pointer transition-all duration-200 hover:shadow-md ${activeDistrict.id === district.id ? 'border-lamsel-red' : ''}`} onClick={() => handleDistrictClick(district)}>
-                  <CardContent className="flex items-center p-4">
-                    <div className="h-12 w-12 overflow-hidden rounded-full">
-                      <img src={district.image} alt={district.name} className="h-full w-full object-cover" />
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="font-medium">Kecamatan {district.name}</h3>
-                      <p className="text-sm text-gray-500">{district.totalVillages} desa</p>
-                    </div>
-                  </CardContent>
-                </Card>)}
-              
-              {filteredDistricts.length === 0 && <div className="rounded-lg border p-6 text-center">
-                  <p>Tidak ada kecamatan yang ditemukan.</p>
-                  <Button variant="link" className="mt-2 text-lamsel-red" onClick={() => setSearchTerm('')}>
-                    Reset pencarian
-                  </Button>
-                </div>}
-            </div>
           </div>
         </div>
       </div>

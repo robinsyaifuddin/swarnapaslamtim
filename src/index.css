@@ -1,0 +1,549 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Lampung Timur unified palette */
+    /* Core palette
+       Hijau (dominant): #58A94E  => hsl(115 37% 48%)
+       Kuning Emas (buttons): #E4B20E => hsl(46 89% 47%)
+       Putih: #FFFFFF => hsl(0 0% 100%)
+       Hitam: #1C1C1C => hsl(0 0% 11%)
+       Merah Aksen: #C0292B => hsl(2 63% 46%)
+    */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 11%;
+    --primary: 115 37% 48%; /* Green dominant */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 115 20% 96%; /* very light green background */
+    --secondary-foreground: 0 0% 11%;
+    --muted: 115 16% 92%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 46 89% 47%; /* Gold for buttons/CTAs */
+    --accent-foreground: 0 0% 11%; /* dark text on gold */
+    --destructive: 2 63% 46%; /* red accent */
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 115 37% 48%;
+    --radius: 0.75rem;
+    
+    /* Lampung Timur brand colors (legacy compatibility) */
+    --lampungtimur-green: 115 37% 48%;
+    --lampungtimur-gold: 46 89% 47%;
+    --lampungtimur-primary: 115 37% 48%;
+    --lampungtimur-dark: 0 0% 11%;
+    --lampungtimur-light: 0 0% 100%;
+    
+    /* Gradient definitions */
+    --gradient-hero: linear-gradient(135deg, hsl(115 37% 48%) 0%, hsl(46 89% 47%) 100%);
+    --gradient-card: linear-gradient(145deg, hsla(0, 0%, 100%, 0.9) 0%, hsla(0, 0%, 98%, 0.85) 100%);
+    --gradient-overlay: linear-gradient(135deg, hsla(0, 0%, 11%, 0.8) 0%, hsla(115, 37%, 48%, 0.6) 100%);
+    
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark mode using black base with high-contrast text and brand colors */
+    --background: 0 0% 11%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 115 37% 48%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 80%;
+    --accent: 46 89% 47%;
+    --accent-foreground: 0 0% 11%;
+    --destructive: 2 63% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 115 37% 48%;
+    
+    /* Dark mode travel colors */
+    --warm-cream: 0 0% 14%;
+    --soft-beige: 0 0% 18%;
+    --warm-brown: 0 0% 28%;
+    --travel-orange: 46 89% 47%;
+    --deep-charcoal: 0 0% 100%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.6;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  /* Modern typography scale */
+  .text-headline {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight;
+  }
+  
+  .text-subheadline {
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold leading-snug;
+  }
+  
+  .text-body-large {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .text-body {
+    @apply text-base leading-relaxed;
+  }
+  
+  .text-caption {
+    @apply text-sm text-muted-foreground;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    .smooth-scroll {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+  }
+
+  /* Mobile-first responsive adjustments */
+  @media (max-width: 640px) {
+    .hero-section {
+      min-height: 70vh;
+      padding: 2rem 0;
+    }
+    
+    .hero-title {
+      @apply text-2xl;
+    }
+    
+    .hero-subtitle {
+      @apply text-base px-4;
+    }
+    
+    .table-mobile {
+      font-size: 0.75rem;
+    }
+    
+    .card-mobile {
+      @apply p-3;
+    }
+    
+    .button-mobile {
+      @apply h-8 px-2 text-xs;
+    }
+    
+    .input-mobile {
+      @apply h-8 text-xs;
+    }
+    
+    .sidebar-mobile {
+      @apply w-60;
+    }
+    
+    .header-mobile {
+      @apply h-14 px-2;
+    }
+  }
+
+  /* Enhanced mobile scrolling */
+  @media (max-width: 768px) {
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .mobile-scroll {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: auto;
+    }
+    
+    .mobile-table {
+      @apply text-xs;
+    }
+    
+    .mobile-table td,
+    .mobile-table th {
+      @apply px-2 py-1;
+    }
+  }
+
+  /* Touch-friendly interactive elements */
+  @media (max-width: 768px) {
+    button, 
+    [role="button"],
+    input,
+    select,
+    textarea {
+      min-height: 44px;
+      min-width: 44px;
+    }
+    
+    .touch-target {
+      @apply min-h-11 min-w-11;
+    }
+  }
+
+  /* Improved text readability on mobile */
+  @media (max-width: 640px) {
+    .text-responsive {
+      @apply text-sm leading-relaxed;
+    }
+    
+    .heading-responsive {
+      @apply text-lg leading-tight;
+    }
+  }
+
+  /* Modern travel website components */
+  
+  .travel-card {
+    @apply bg-card rounded-2xl shadow-sm border border-border overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+  
+  .destination-card {
+    @apply bg-card rounded-2xl shadow-sm border border-border overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative cursor-pointer;
+  }
+  
+  .destination-card:hover .destination-card-image {
+    transform: scale(1.05);
+  }
+  
+  .destination-card-image {
+    @apply w-full h-48 object-cover transition-transform duration-300;
+  }
+  
+  .cta-button {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5;
+  }
+  
+  .hero-section {
+    @apply relative min-h-screen flex items-center justify-center overflow-hidden;
+    background: var(--gradient-hero);
+  }
+  
+  .hero-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  .particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float-particle 6s ease-in-out infinite;
+  }
+  
+  .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: 0s; }
+  .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: 1s; }
+  .particle:nth-child(3) { width: 3px; height: 3px; left: 30%; animation-delay: 2s; }
+  .particle:nth-child(4) { width: 5px; height: 5px; left: 40%; animation-delay: 0.5s; }
+  .particle:nth-child(5) { width: 4px; height: 4px; left: 50%; animation-delay: 1.5s; }
+  .particle:nth-child(6) { width: 7px; height: 7px; left: 60%; animation-delay: 2.5s; }
+  .particle:nth-child(7) { width: 3px; height: 3px; left: 70%; animation-delay: 3s; }
+  .particle:nth-child(8) { width: 5px; height: 5px; left: 80%; animation-delay: 0.8s; }
+  .particle:nth-child(9) { width: 4px; height: 4px; left: 90%; animation-delay: 1.8s; }
+  
+  @keyframes float-particle {
+    0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+  
+  .hero-content {
+    @apply container mx-auto px-4 text-center max-w-5xl;
+  }
+  
+  .hero-title {
+    @apply mb-6;
+  }
+  
+  .hero-subtitle {
+    @apply text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed;
+  }
+  
+  .section-container {
+    @apply container mx-auto px-4 py-12 md:py-16;
+  }
+  
+  .section-title {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold mb-8 text-foreground;
+  }
+  
+  .grid-destinations {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  .grid-stories {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8;
+  }
+  
+  .story-card {
+    @apply travel-card;
+  }
+  
+  .story-card-image {
+    @apply w-full h-48 object-cover;
+  }
+  
+  .story-card-content {
+    @apply p-6;
+  }
+  
+  .story-title {
+    @apply text-lg font-semibold mb-2 text-foreground hover:text-primary transition-colors;
+  }
+  
+  .story-excerpt {
+    @apply text-body text-muted-foreground line-clamp-3;
+  }
+  
+  .navbar-modern {
+    @apply bg-background/95 backdrop-blur-md border-b border-border sticky top-0 z-50;
+  }
+  
+  .newsletter-section {
+    @apply relative py-20 overflow-hidden;
+  }
+  
+  .newsletter-overlay {
+    @apply absolute inset-0 bg-gradient-to-r from-foreground/80 to-foreground/60;
+  }
+  
+  .newsletter-content {
+    @apply relative z-10 text-center text-white max-w-2xl mx-auto px-4;
+  }
+
+  /* Responsive helpers */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .navbar-item {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .search-container {
+    @apply bg-white/90 backdrop-blur-lg;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+
+  .umkm-card {
+    @apply overflow-hidden rounded-lg border transition-all duration-300 hover:shadow-lg;
+  }
+
+  .floating-element {
+    @apply animate-float;
+  }
+  
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  
+  .animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .stagger-item {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .stagger-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .stagger-delay-1 { transition-delay: 0.1s; }
+  .stagger-delay-2 { transition-delay: 0.2s; }
+  .stagger-delay-3 { transition-delay: 0.3s; }
+  .stagger-delay-4 { transition-delay: 0.4s; }
+  .stagger-delay-5 { transition-delay: 0.5s; }
+  
+  .animated-section > * {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+  }
+  
+  .animated-section.is-active > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .animated-section.is-active > *:nth-child(1) { transition-delay: 0.1s; }
+  .animated-section.is-active > *:nth-child(2) { transition-delay: 0.2s; }
+  .animated-section.is-active > *:nth-child(3) { transition-delay: 0.3s; }
+  .animated-section.is-active > *:nth-child(4) { transition-delay: 0.4s; }
+  .animated-section.is-active > *:nth-child(5) { transition-delay: 0.5s; }
+
+  /* Custom scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+
+  /* Mobile-optimized animations */
+  @media (max-width: 768px) {
+    .mobile-no-animation {
+      animation: none !important;
+      transition: none !important;
+      transform: none !important;
+    }
+    
+    .mobile-reduced-motion {
+      animation-duration: 0.1s !important;
+      transition-duration: 0.1s !important;
+    }
+  }
+
+  /* Enhanced card hover effects for mobile */
+  .card-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .card-hover:hover {
+      transform: none;
+    }
+  }
+
+  /* 3D Card Effects */
+  .card-3d {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-3d:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-3d-content {
+    @apply h-full;
+  }
+
+  @media (max-width: 768px) {
+    .card-3d:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Better form styling for mobile */
+  @media (max-width: 640px) {
+    .form-mobile input,
+    .form-mobile textarea,
+    .form-mobile select {
+      @apply text-base;
+    }
+  }
+
+  /* Improved table responsiveness */
+  .table-responsive {
+    @apply block overflow-x-auto whitespace-nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .table-responsive table {
+      @apply min-w-full;
+    }
+    
+    .table-responsive td,
+    .table-responsive th {
+      @apply px-2 py-1 text-xs;
+    }
+  }
+
+  /* Hide scrollbar untuk carousel */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Image placeholder untuk card tanpa foto */
+  img[src=""] {
+    min-height: 200px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    display: block;
+  }
+
+  /* Placeholder untuk card image */
+  .image-placeholder {
+    min-height: 200px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
+    font-size: 3rem;
+  }
+}

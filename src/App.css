@@ -1,0 +1,9 @@
+/* Let's move everything to index.css and keep App.css minimal */
+/* The styles below are kept for backwards compatibility */
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Animation utilities are now in index.css */

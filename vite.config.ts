@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   // Use environment variable for base path
-  // GitHub Pages: /webdesafajarbaru/
+  // GitHub Pages: /swarnapaslamtim/
   // Netlify/Vercel: /
   base: process.env.VITE_BASE_PATH || '/',
   build: {

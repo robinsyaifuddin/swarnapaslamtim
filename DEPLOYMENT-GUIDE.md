@@ -20,7 +20,7 @@ Website Swarnapas sudah dikonfigurasi untuk dideploy ke berbagai platform. Berik
    - Buka Settings → Pages
    - Source: pilih "GitHub Actions"
 3. **Push ke branch main** - deployment otomatis berjalan
-4. **Akses website** di: `https://robinsyaifuddin.github.io/webdesafajarbaru/`
+4. **Akses website** di: `https://robinsyaifuddin.github.io/swarnapaslamtim/`
 
 ### File Konfigurasi:
 - `.github/workflows/deploy.yml` - GitHub Actions workflow
@@ -35,7 +35,7 @@ Website Swarnapas sudah dikonfigurasi untuk dideploy ke berbagai platform. Berik
 1. Login ke [Netlify](https://app.netlify.com)
 2. Klik **"Add new site"** → **"Import an existing project"**
 3. Pilih **GitHub** dan authorize
-4. Pilih repository **robinsyaifuddin/webdesafajarbaru**
+4. Pilih repository **robinsyaifuddin/swarnapaslamtim**
 5. Konfigurasi build settings (sudah otomatis terdeteksi):
    - **Build command**: `npm run build`
    - **Publish directory**: `dist`
@@ -68,7 +68,7 @@ Setelah deploy, bisa setup custom domain di Netlify dashboard.
 ### Cara Deploy (Opsi 1 - Import dari GitHub):
 1. Login ke [Vercel](https://vercel.com)
 2. Klik **"Add New"** → **"Project"**
-3. Import repository **robinsyaifuddin/webdesafajarbaru**
+3. Import repository **robinsyaifuddin/swarnapaslamtim**
 4. Konfigurasi build settings (sudah otomatis terdeteksi):
    - **Framework Preset**: Vite
    - **Build Command**: `npm run build`
@@ -124,7 +124,7 @@ Build output akan ada di folder `dist/`.
 
 ### Blank page setelah deploy
 - Cek browser console untuk error
-- Pastikan base path sudah benar (GitHub Pages pakai `/webdesafajarbaru/`)
+- Pastikan base path sudah benar (GitHub Pages pakai `/swarnapaslamtim/`)
 - Untuk Netlify/Vercel, base path adalah `/`
 
 ### Build gagal

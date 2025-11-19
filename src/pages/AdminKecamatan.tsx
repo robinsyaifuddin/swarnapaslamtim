@@ -89,6 +89,7 @@ const AdminKecamatan = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [kecamatanToDelete, setKecamatanToDelete] = useState<KecamatanData | null>(null);
   const [activeEditTab, setActiveEditTab] = useState('profile');
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number>(kecamatanData[0]?.id || 1);
   
   // State untuk form edit
   const [formData, setFormData] = useState<KecamatanData | null>(null);
@@ -100,6 +101,8 @@ const AdminKecamatan = () => {
     kecamatan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     kecamatan.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const selectedDistrict = kecamatanData.find(k => k.id === selectedDistrictId) || kecamatanData[0];
 
   // Set form data when editing kecamatan
   useEffect(() => {
@@ -272,6 +275,114 @@ const AdminKecamatan = () => {
         </Dialog>
       </div>
 
+      {/* Kelola Kecamatan - panel atas */}
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <CardTitle className="text-lg">Kelola Kecamatan</CardTitle>
+              <CardDescription>Pilih kecamatan dan kelola informasinya</CardDescription>
+            </div>
+            <select
+              className="flex h-10 w-full md:w-80 rounded-md border border-input bg-background px-3 py-2 text-sm"
+              value={selectedDistrictId}
+              onChange={(e) => setSelectedDistrictId(Number(e.target.value))}
+            >
+              {kecamatanData.map(d => (
+                <option key={d.id} value={d.id}>{d.name}</option>
+              ))}
+            </select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="profil" className="w-full">
+            <TabsList className="flex justify-center flex-wrap gap-2 w-full">
+              <TabsTrigger value="profil">Profil</TabsTrigger>
+              <TabsTrigger value="umkm">UMKM</TabsTrigger>
+              <TabsTrigger value="pariwisata">Pariwisata</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="profil" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Profil Kecamatan</CardTitle>
+                    <CardDescription>Ringkasan untuk {selectedDistrict?.name}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <div><span className="text-gray-600">Nama:</span> {selectedDistrict?.name}</div>
+                    <div><span className="text-gray-600">Camat:</span> {selectedDistrict?.leader || '-'}</div>
+                    <div><span className="text-gray-600">Alamat:</span> {selectedDistrict?.address || '-'}</div>
+                    <div><span className="text-gray-600">Website:</span> {selectedDistrict?.website || '-'}</div>
+                    <div className="pt-2">
+                      <Button size="sm" onClick={() => window.location.assign(`/admin/kecamatan/profile/${selectedDistrict?.id}`)}>Edit Profil Kecamatan</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base">Statistik</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-3 gap-3 text-center">
+                    <div>
+                      <div className="text-xs text-gray-600">Desa</div>
+                      <div className="text-lg font-semibold">{selectedDistrict?.villages}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-600">Penduduk</div>
+                      <div className="text-lg font-semibold">{selectedDistrict?.population.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-600">Landmark</div>
+                      <div className="text-lg font-semibold">{selectedDistrict?.landmarks}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="umkm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(selectedDistrict?.products || []).map((p) => (
+                  <Card key={p.id} className="overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{p.name}</CardTitle>
+                      <CardDescription>Pemilik: -</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-28 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Foto UMKM</div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {(selectedDistrict?.products || []).length === 0 && (
+                  <div className="text-sm text-gray-500">Belum ada UMKM terdaftar untuk kecamatan ini</div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="pariwisata">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(selectedDistrict?.attractions || []).map((a) => (
+                  <Card key={a.id} className="overflow-hidden">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">{a.name}</CardTitle>
+                      <CardDescription>Penyelenggara: -</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-28 rounded-md bg-gray-100 flex items-center justify-center text-gray-400 text-sm">Foto Destinasi</div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {(selectedDistrict?.attractions || []).length === 0 && (
+                  <div className="text-sm text-gray-500">Belum ada destinasi wisata terdaftar</div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Daftar Kecamatan */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">

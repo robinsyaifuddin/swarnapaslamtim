@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +51,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { toast } from "sonner";
+import { lampungTimurDistricts } from '@/data/lampungTimurDistricts';
 
 // Data UMKM Lampung Timur yang valid dan relevan
 const umkmData = [
@@ -99,6 +101,7 @@ const reviewDummyData = [
 ];
 
 const AdminUMKM = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -144,6 +147,9 @@ const AdminUMKM = () => {
   });
 
   const adminUsername = sessionStorage.getItem('adminUsername');
+  const adminType = sessionStorage.getItem('adminType');
+  const isCentralAdmin = adminType === 'central' || adminUsername === 'adminpusat';
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number>(lampungTimurDistricts[0]?.id || 1);
 
   const filteredData = umkmData.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -238,18 +244,7 @@ const AdminUMKM = () => {
 
   // Add new product
   const handleAddProduct = () => {
-    const newProduct = {
-      id: Date.now(),
-      name: '',
-      price: 0,
-      image: '/placeholder.svg',
-      description: '',
-      inStock: true
-    };
-    setFormData({
-      ...formData,
-      products: [...formData.products, newProduct]
-    });
+    navigate('/admin/umkm/product/new');
   };
 
   // Update product
@@ -355,6 +350,58 @@ const AdminUMKM = () => {
 
   return (
     <div className="space-y-6">
+      {isCentralAdmin && (
+        <Card className="border shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <CardTitle className="text-lg">Daftar UMKM Setempat</CardTitle>
+                <CardDescription>Filter UMKM berdasarkan kecamatan</CardDescription>
+              </div>
+              <select
+                className="flex h-10 w-full md:w-80 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={selectedDistrictId}
+                onChange={(e) => setSelectedDistrictId(Number(e.target.value))}
+              >
+                {lampungTimurDistricts.map(d => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    <TableHead>#</TableHead>
+                    <TableHead>Nama UMKM</TableHead>
+                    <TableHead className="hidden md:table-cell">Kategori</TableHead>
+                    <TableHead className="hidden md:table-cell">Pemilik</TableHead>
+                    <TableHead>Lokasi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {umkmData
+                    .filter(u => {
+                      const district = lampungTimurDistricts.find(d => d.id === selectedDistrictId);
+                      return district ? u.location.toLowerCase().includes(district.name.toLowerCase()) : true;
+                    })
+                    .map((u, idx) => (
+                      <TableRow key={u.id}>
+                        <TableCell className="text-xs">{idx + 1}</TableCell>
+                        <TableCell className="text-sm font-medium">{u.name}</TableCell>
+                        <TableCell className="hidden md:table-cell text-xs">{u.category}</TableCell>
+                        <TableCell className="hidden md:table-cell text-xs">{u.owner}</TableCell>
+                        <TableCell className="text-xs">{u.location}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Kelola UMKM</h1>
@@ -399,7 +446,7 @@ const AdminUMKM = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-            <TabsList className="w-full mb-6 grid grid-cols-2">
+            <TabsList className="w-full mb-6 grid grid-cols-2 bg-emerald-50">
               <TabsTrigger value="manajemen" className="flex items-center gap-1">
                 <Store className="h-4 w-4" /> Manajemen
               </TabsTrigger>
@@ -656,14 +703,14 @@ const AdminUMKM = () => {
                   </div>
                 </TabsContent>
 
-                {/* Tab Produk: daftar produk dengan kartu ala halaman publik */}
+                {/* Tab Produk: daftar produk (preview cards, non-editable) */}
                 <TabsContent value="produk" className="space-y-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium">Daftar Produk</h3>
                     <Button 
                       type="button" 
                       onClick={handleAddProduct}
-                      className="bg-lamsel-green hover:bg-lamsel-green/80"
+                      className="bg-lamsel-green hover:bg-lamsel-green/80 shadow"
                     >
                       <Plus className="mr-2 h-4 w-4" /> Tambah Produk
                     </Button>
@@ -676,68 +723,34 @@ const AdminUMKM = () => {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                      {formData.products.map((product, index) => (
-                        <Card key={product.id} className="overflow-hidden shadow-sm hover:shadow-md transition-all">
-                          <div className="bg-gray-100 h-40 flex items-center justify-center relative">
-                            <ImagePlus className="h-10 w-10 text-gray-400" />
-                            <input id={`product-image-${index}`} type="file" className="hidden" />
+                      {formData.products.map((product) => (
+                        <Card key={product.id} className="overflow-hidden shadow-sm hover:shadow-md transition-all border-emerald-100">
+                          <div className="bg-emerald-50 h-40 flex items-center justify-center">
+                            <ImagePlus className="h-10 w-10 text-emerald-400" />
                           </div>
                           <CardContent className="p-4 space-y-3">
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex-1">
-                                <Label className="text-[11px] text-muted-foreground uppercase">Nama Produk</Label>
-                                <Input 
-                                  id={`product-name-${index}`} 
-                                  value={product.name} 
-                                  onChange={(e) => handleUpdateProduct(index, 'name', e.target.value)}
-                                  className="mt-1 h-9 text-sm font-semibold"
-                                  placeholder="Nama produk" 
-                                  required 
-                                />
+                                <h4 className="font-semibold text-sm md:text-base">{product.name || 'Nama produk'}</h4>
                               </div>
                               <div className="w-28 text-right">
-                                <Label className="text-[11px] text-muted-foreground uppercase">Harga</Label>
-                                <Input 
-                                  id={`product-price-${index}`} 
-                                  type="number"
-                                  value={product.price} 
-                                  onChange={(e) => handleUpdateProduct(index, 'price', Number(e.target.value))}
-                                  className="mt-1 h-9 text-sm font-semibold"
-                                  placeholder="0" 
-                                  required 
-                                />
+                                <span className="text-xs text-muted-foreground">Harga</span>
+                                <div className="font-semibold text-sm">{product.price?.toLocaleString('id-ID')}</div>
                               </div>
                             </div>
 
-                            <div>
-                              <Label className="text-[11px] text-muted-foreground uppercase">Deskripsi Singkat</Label>
-                              <Textarea 
-                                id={`product-description-${index}`} 
-                                value={product.description} 
-                                onChange={(e) => handleUpdateProduct(index, 'description', e.target.value)}
-                                className="mt-1 min-h-[60px] text-sm"
-                                placeholder="Deskripsi singkat produk" 
-                                required
-                              />
-                            </div>
+                            <p className="text-sm text-muted-foreground line-clamp-3">{product.description || 'Deskripsi singkat produk'}</p>
 
                             <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <Checkbox 
-                                  id={`product-stock-${index}`} 
-                                  checked={product.inStock}
-                                  onCheckedChange={(checked) => handleUpdateProduct(index, 'inStock', checked)}
-                                />
-                                <Label htmlFor={`product-stock-${index}`} className="text-xs cursor-pointer">
-                                  Produk tersedia
-                                </Label>
-                              </div>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${product.inStock ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                                {product.inStock ? 'Produk tersedia' : 'Produk tidak tersedia'}
+                              </span>
                               <Button 
                                 type="button" 
                                 variant="ghost" 
                                 size="icon"
                                 className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                onClick={() => handleDeleteProduct(index)}
+                                onClick={() => handleDeleteProduct(formData.products.findIndex(p => p.id === product.id))}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -746,10 +759,10 @@ const AdminUMKM = () => {
                             <Button 
                               type="button" 
                               variant="outline" 
-                              className="w-full mt-1 text-xs md:text-sm"
-                              onClick={() => toast.info('Tampilan ini mensimulasikan tombol "Pesan Produk" di halaman publik')}
+                              className="w-full mt-1 text-xs md:text-sm border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                              onClick={() => navigate(`/admin/umkm/product/${product.id}/edit`)}
                             >
-                              Pesan Produk
+                              Edit Produk
                             </Button>
                           </CardContent>
                         </Card>

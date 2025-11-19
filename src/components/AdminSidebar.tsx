@@ -254,13 +254,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar, isUMKMAdmin = false }: AdminSideb
                 </>
               )}
               
-              <SidebarLink
-                icon={Settings}
-                href="/admin/pengaturan"
-                label="Pengaturan"
-                active={location.pathname === '/admin/pengaturan'}
-                onClick={handleLinkClick}
-              />
+              
               
               <div className="mt-4 pt-4 border-t">
                 <Button

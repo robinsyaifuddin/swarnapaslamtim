@@ -218,10 +218,7 @@ const AdminLayout = () => {
                   <User className="mr-2" size={14} />
                   Profil Saya
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={handleProfileSettings} className="text-sm">
-                  <Settings className="mr-2" size={14} />
-                  Pengaturan
-                </DropdownMenuItem>
+                
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-red-500 text-sm">
                   <LogOut className="mr-2" size={14} />

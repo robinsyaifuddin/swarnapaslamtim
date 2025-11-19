@@ -31,12 +31,13 @@ const ManagerDashboard = lazy(() => import("./pages/ManagerDashboard"));
 const UMKMDetailPage = lazy(() => import("./pages/UMKMDetailPage"));
 const DestinationDetailPage = lazy(() => import("./pages/DestinationDetailPage"));
 const AdminDestinasi = lazy(() => import("./pages/AdminDestinasi"));
+const AdminProductForm = lazy(() => import("./pages/AdminProductForm"));
 const AdminAgenda = lazy(() => import("./pages/AdminAgenda"));
 const AdminUMKM = lazy(() => import("./pages/AdminUMKM"));
 const AdminKontak = lazy(() => import("./pages/AdminKontak"));
 const AdminKecamatan = lazy(() => import("./pages/AdminKecamatan"));
+const AdminKecamatanProfile = lazy(() => import("./pages/AdminKecamatanProfile"));
 const AdminStatistik = lazy(() => import("./pages/AdminStatistik"));
-const AdminPengaturan = lazy(() => import("./pages/AdminPengaturan"));
 const AdminProfil = lazy(() => import("./pages/AdminProfil"));
 
 const queryClient = new QueryClient();
@@ -88,10 +89,12 @@ const App = () => (
               <Route path="destinasi" element={<AdminDestinasi />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="umkm" element={<AdminUMKM />} />
+              <Route path="umkm/product/new" element={<AdminProductForm />} />
+              <Route path="umkm/product/:id/edit" element={<AdminProductForm />} />
               <Route path="kecamatan" element={<AdminKecamatan />} />
+              <Route path="kecamatan/profile/:id" element={<AdminKecamatanProfile />} />
               <Route path="kontak" element={<AdminKontak />} />
               <Route path="statistik" element={<AdminStatistik />} />
-              <Route path="pengaturan" element={<AdminPengaturan />} />
               <Route path="profil" element={<AdminProfil />} />
             </Route>
             

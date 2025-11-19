@@ -91,10 +91,10 @@ const Kecamatan = () => {
             <DistrictDetail district={activeDistrict} />
             
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+              <TabsList className="flex w-full justify-center flex-wrap gap-2">
                 <TabsTrigger value="profile">Profil</TabsTrigger>
-                <TabsTrigger value="attractions">Wisata</TabsTrigger>
-                <TabsTrigger value="products">Produk</TabsTrigger>
+                <TabsTrigger value="umkm">UMKM</TabsTrigger>
+                <TabsTrigger value="pariwisata">Pariwisata</TabsTrigger>
               </TabsList>
               
               <TabsContent value="profile" className="space-y-4">
@@ -178,10 +178,10 @@ const Kecamatan = () => {
                 </Card>
               </TabsContent>
               
-              <TabsContent value="attractions">
+              <TabsContent value="pariwisata">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Destinasi Wisata</CardTitle>
+                    <CardTitle>Destinasi Pariwisata</CardTitle>
                     <CardDescription>
                       Tempat wisata terkenal di Kecamatan {activeDistrict.name}
                     </CardDescription>
@@ -189,30 +189,35 @@ const Kecamatan = () => {
                   <CardContent>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {activeDistrict.attractions.map((attraction: string, index: number) => <div key={index} className="flex items-center rounded-lg border p-3 hover:bg-primary/5 transition-colors">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
-                            {index + 1}
-                          </div>
-                          <span className="ml-3">{attraction}</span>
-                        </div>)}
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
+                          {index + 1}
+                        </div>
+                        <span className="ml-3">{attraction}</span>
+                      </div>)}
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
               
-              <TabsContent value="products">
+              <TabsContent value="umkm">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Produk Unggulan</CardTitle>
+                    <CardTitle>UMKM Terkait</CardTitle>
                     <CardDescription>
-                      Produk khas dan unggulan dari Kecamatan {activeDistrict.name}
+                      UMKM yang terafiliasi dengan Kecamatan {activeDistrict.name}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {activeDistrict.products.map((product: string, index: number) => <div key={index} className="flex items-center rounded-lg border p-3 hover:bg-primary/5 transition-colors">
-                          <div className="h-3 w-3 rounded-full bg-primary"></div>
-                          <span className="ml-3">{product}</span>
-                        </div>)}
+                      {activeDistrict.products.map((product: string, index: number) => (
+                        <div key={index} className="flex items-center justify-between rounded-lg border p-3 hover:bg-primary/5 transition-colors">
+                          <div className="flex items-center">
+                            <div className="h-3 w-3 rounded-full bg-primary"></div>
+                            <span className="ml-3">{product}</span>
+                          </div>
+                          <span className="text-xs text-gray-500">Pemilik: -</span>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>

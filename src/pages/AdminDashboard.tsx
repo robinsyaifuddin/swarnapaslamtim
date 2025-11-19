@@ -196,14 +196,12 @@ const AdminDashboard = () => {
         { label: 'Tambah Destinasi', icon: MapPin, path: '/admin/destinasi', color: 'bg-blue-500 hover:bg-blue-600' },
         ...baseActions,
         { label: 'Kelola Kecamatan', icon: Map, path: '/admin/kecamatan', color: 'bg-red-500 hover:bg-red-600' },
-        { label: 'Lihat Pesan', icon: MessageSquare, path: '/admin/kontak', color: 'bg-orange-500 hover:bg-orange-600' },
-        { label: 'Pengaturan', icon: Settings, path: '/admin/pengaturan', color: 'bg-gray-500 hover:bg-gray-600' }
+        { label: 'Lihat Pesan', icon: MessageSquare, path: '/admin/kontak', color: 'bg-orange-500 hover:bg-orange-600' }
       ];
     }
 
     return [
-      ...baseActions,
-      { label: 'Pengaturan', icon: Settings, path: '/admin/pengaturan', color: 'bg-gray-500 hover:bg-gray-600' }
+      ...baseActions
     ];
   };
 

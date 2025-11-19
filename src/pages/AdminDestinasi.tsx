@@ -40,6 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { lampungTimurDestinations } from '@/data/lampungTimurDestinations';
+import { lampungTimurDistricts } from '@/data/lampungTimurDistricts';
 
 // Extended destination data model - menggunakan data Lampung Timur yang valid
 const destinasiData = lampungTimurDestinations.map(dest => ({
@@ -212,6 +213,10 @@ const availableActivities = [
 
 const AdminDestinasi = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const adminUsername = sessionStorage.getItem('adminUsername');
+  const adminType = sessionStorage.getItem('adminType');
+  const isCentralAdmin = adminType === 'central' || adminUsername === 'adminpusat';
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number>(lampungTimurDistricts[0]?.id || 1);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);
@@ -401,6 +406,56 @@ const AdminDestinasi = () => {
 
   return (
     <div className="space-y-6">
+      {isCentralAdmin && (
+        <Card className="border shadow-sm">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div>
+                <CardTitle className="text-lg">Destinasi per Kecamatan</CardTitle>
+                <CardDescription>Filter destinasi wisata berdasarkan kecamatan</CardDescription>
+              </div>
+              <select
+                className="flex h-10 w-full md:w-80 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={selectedDistrictId}
+                onChange={(e) => setSelectedDistrictId(Number(e.target.value))}
+              >
+                {lampungTimurDistricts.map(d => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40">
+                    <TableHead>#</TableHead>
+                    <TableHead>Nama Destinasi</TableHead>
+                    <TableHead className="hidden md:table-cell">Kategori</TableHead>
+                    <TableHead>Lokasi</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {destinasiData
+                    .filter(d => {
+                      const district = lampungTimurDistricts.find(x => x.id === selectedDistrictId);
+                      return district ? d.location.toLowerCase().includes(district.name.toLowerCase()) : true;
+                    })
+                    .map((d, idx) => (
+                      <TableRow key={d.id}>
+                        <TableCell className="text-xs">{idx + 1}</TableCell>
+                        <TableCell className="text-sm font-medium">{d.name}</TableCell>
+                        <TableCell className="hidden md:table-cell text-xs">{d.category}</TableCell>
+                        <TableCell className="text-xs">{d.location}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Kelola Layanan Agenda & Tour</h1>

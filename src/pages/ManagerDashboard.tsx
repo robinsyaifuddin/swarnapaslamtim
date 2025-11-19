@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import {
   ShoppingBag,
   DollarSign
 } from 'lucide-react';
+import { lampungTimurDistricts } from '@/data/lampungTimurDistricts';
 
 // Demo data untuk UMKM
 const demoUMKM = [
@@ -169,8 +171,9 @@ const demoTourBookings = [
 
 const ManagerDashboard = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'umkm' | 'pariwisata'>('umkm');
+  const [activeTab, setActiveTab] = useState<'umkm' | 'pariwisata' | 'kecamatan'>('umkm');
   const [items, setItems] = useState(demoUMKM);
+  const [selectedDistrictId, setSelectedDistrictId] = useState<number>(lampungTimurDistricts[0]?.id || 1);
   
   const adminType = sessionStorage.getItem('adminType');
   const adminUsername = sessionStorage.getItem('adminUsername') || 'Manager';
@@ -192,7 +195,7 @@ const ManagerDashboard = () => {
   }, [isUMKMManager]);
 
   const handleAddNew = () => {
-    const path = activeTab === 'umkm' ? '/admin/umkm' : '/admin/destinasi';
+    const path = activeTab === 'umkm' ? '/admin/umkm' : activeTab === 'pariwisata' ? '/admin/destinasi' : '/admin/kecamatan';
     navigate(path);
   };
 
@@ -228,6 +231,7 @@ const ManagerDashboard = () => {
   };
 
   const currentItems = activeTab === 'umkm' ? demoUMKM : demoPariwisata;
+  const selectedDistrict = lampungTimurDistricts.find(d => d.id === selectedDistrictId) || lampungTimurDistricts[0];
 
   const stats = activeTab === 'umkm'
     ? {
@@ -523,85 +527,139 @@ const ManagerDashboard = () => {
             <MapPin className="mr-2 h-4 w-4" />
             Pariwisata
           </Button>
+          <Button
+            variant={activeTab === 'kecamatan' ? 'default' : 'ghost'}
+            onClick={() => {
+              setActiveTab('kecamatan');
+            }}
+            className="flex-1"
+          >
+            Kelola Kecamatan
+          </Button>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentItems.map((item) => (
-          <Card key={item.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="aspect-video relative overflow-hidden">
-              <img 
-                src={item.image} 
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute top-2 right-2">
-                <Badge className="bg-green-600">
-                  {(item as any).status === 'active' ? 'Aktif' : 'Non-aktif'}
-                </Badge>
-              </div>
+      {activeTab === 'kecamatan' && (
+        <Card className="mt-6">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg">Kelola Kecamatan</CardTitle>
+            <CardDescription>Pilih kecamatan untuk dikelola dan lihat analitiknya</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+              <select
+                className="flex h-10 w-full md:w-80 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                value={selectedDistrictId}
+                onChange={(e) => setSelectedDistrictId(Number(e.target.value))}
+              >
+                {lampungTimurDistricts.map(d => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+              <Button className="bg-green-600 hover:bg-green-700" onClick={() => navigate(`/admin/kecamatan/profile/${selectedDistrict.id}`)}>Edit Profil Kecamatan</Button>
             </div>
-            
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div>
-                  <h3 className="font-semibold text-lg line-clamp-1">{item.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-2">{item.description}</p>
+
+            <Tabs defaultValue="analitik" className="w-full">
+              <TabsList className="grid grid-cols-2 mb-4">
+                <TabsTrigger value="analitik">Analitik & Profil</TabsTrigger>
+                <TabsTrigger value="resources">UMKM & Pariwisata</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="analitik">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-gray-600">Kunjungan Halaman</p>
+                      <p className="text-2xl font-bold">{(selectedDistrict?.visitors || 1240).toLocaleString('id-ID')}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-gray-600">Jumlah Desa</p>
+                      <p className="text-2xl font-bold">{selectedDistrict?.totalVillages}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-6">
+                      <p className="text-sm text-gray-600">Penduduk</p>
+                      <p className="text-2xl font-bold">{(parseInt((selectedDistrict?.population || '0').toString().replace(/,/g, ''))).toLocaleString('id-ID')}</p>
+                    </CardContent>
+                  </Card>
                 </div>
-                
-                <div className="flex items-center justify-between text-sm">
-                  <Badge variant="outline">{item.category}</Badge>
-                  <div className="flex items-center gap-1">
-                    {renderStars(item.rating)}
-                    <span className="text-gray-600 ml-1">{item.rating}</span>
-                  </div>
+
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Profil Kecamatan</CardTitle>
+                      <CardDescription>Ringkasan data utama</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm">
+                      <div><span className="text-gray-600">Nama:</span> {selectedDistrict?.name}</div>
+                      <div><span className="text-gray-600">Camat:</span> {selectedDistrict?.leader || '-'}</div>
+                      <div><span className="text-gray-600">Alamat:</span> {selectedDistrict?.address || '-'}</div>
+                      <div><span className="text-gray-600">Website:</span> {selectedDistrict?.website || '-'}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Deskripsi</CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm text-gray-700">
+                      {selectedDistrict?.description}
+                    </CardContent>
+                  </Card>
                 </div>
-                
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {(item as any).location}
+              </TabsContent>
+
+              <TabsContent value="resources">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">UMKM di Kecamatan</CardTitle>
+                      <CardDescription>Daftar produk unggulan dan pemilik</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {(selectedDistrict?.products || []).slice(0, 8).map((p, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm border rounded-md p-2">
+                          <div>
+                            <div className="font-medium">{p}</div>
+                            <div className="text-gray-600">Pemilik: -</div>
+                          </div>
+                          <Button size="sm" variant="outline" onClick={() => navigate('/admin/umkm')}>Lihat</Button>
+                        </div>
+                      ))}
+                      {(selectedDistrict?.products || []).length === 0 && (
+                        <div className="text-sm text-gray-500">Belum ada data produk</div>
+                      )}
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base">Pariwisata di Kecamatan</CardTitle>
+                      <CardDescription>Daftar destinasi dan penyelenggara</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {(selectedDistrict?.attractions || []).slice(0, 8).map((a, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm border rounded-md p-2">
+                          <div>
+                            <div className="font-medium">{a}</div>
+                            <div className="text-gray-600">Penyelenggara: -</div>
+                          </div>
+                          <Button size="sm" variant="outline" onClick={() => navigate('/admin/destinasi')}>Lihat</Button>
+                        </div>
+                      ))}
+                      {(selectedDistrict?.attractions || []).length === 0 && (
+                        <div className="text-sm text-gray-500">Belum ada data destinasi</div>
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
-                
-                {(item as any).owner && (
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Users className="h-4 w-4 mr-1" />
-                    {(item as any).owner}
-                  </div>
-                )}
-                
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => handleView(item.id)}
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Lihat
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-1"
-                    onClick={() => handleEdit(item.id)}
-                  >
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleDelete(item.id)}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
+
     </div>
   );
 };

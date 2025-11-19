@@ -185,7 +185,7 @@ const PaymentPage = () => {
     const contentWidth = pageWidth - (margin * 2);
     
     // Colors matching UMKM invoice
-    const primaryColor = { r: 124, g: 58, b: 237 }; // Lamsel purple
+    const primaryColor = { r: 124, g: 58, b: 237 }; // Lampung Timur purple
     const textColor = { r: 55, g: 65, b: 81 };
     const lightGray = { r: 243, g: 244, b: 246 };
     
@@ -207,7 +207,7 @@ const PaymentPage = () => {
       // Subtitle
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
-      pdf.text('Lampung Selatan Travel Services', margin, 32);
+      pdf.text('Lampung Timur Travel Services', margin, 32);
 
       // Reset text color
       pdf.setTextColor(textColor.r, textColor.g, textColor.b);
@@ -381,7 +381,7 @@ const PaymentPage = () => {
       yPos += 8;
       pdf.setFont('helvetica', 'normal');
       pdf.text(`Penyedia: ${event.provider.name}`, margin, yPos);
-      pdf.text('Email: info@lampungselatan.travel', margin, yPos + 6);
+      pdf.text('Email: info@lampungtimur.travel', margin, yPos + 6);
       pdf.text('WhatsApp: +62 887 437 525 303', pageWidth - margin - 60, yPos + 6);
       
       // Save the PDF

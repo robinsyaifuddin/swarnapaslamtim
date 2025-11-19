@@ -1,7 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { MapPin, Users, TrendingUp, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import heroBackground from '@/assets/hero-bg.gif';
 
 export const HeroSection = () => {
   const navigate = useNavigate();
@@ -31,12 +30,6 @@ export const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background GIF (fallback) */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-      />
-
       {/* Video Background utama dari public/Video/background-hero.mp4 */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
@@ -45,10 +38,8 @@ export const HeroSection = () => {
         loop
         playsInline
         preload="auto"
-        poster={heroBackground}
       >
         <source src="/Video/background-hero.mp4" type="video/mp4" />
-        {/* Jika video tidak bisa dimuat, browser akan menampilkan GIF di bawahnya */}
       </video>
       
       {/* Gradient overlay for better text readability */}

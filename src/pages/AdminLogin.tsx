@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Eye, EyeOff, LogIn, ArrowLeft, HelpCircle, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, LogIn, ArrowLeft, HelpCircle, UserPlus, Mail, Phone, Building2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { authService } from '@/services/authService';
+import { cn } from '@/lib/utils';
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,6 +16,16 @@ const AdminLogin = () => {
   const [showForgotPasswordDialog, setShowForgotPasswordDialog] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [registerForm, setRegisterForm] = useState({
+    organization: '',
+    fullName: '',
+    email: '',
+    phone: '',
+    regPassword: '',
+    confirmPassword: ''
+  });
   const navigate = useNavigate();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,76 +64,218 @@ const AdminLogin = () => {
       setResetEmail('');
     }, 1500);
   };
-  return <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 flex flex-col justify-center items-center p-4">
-      <div className="absolute top-4 left-4">
-        <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-500 text-slate-50">
+  const handleRegisterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!registerForm.organization || !registerForm.fullName || !registerForm.email) {
+      toast.error('Lengkapi semua data pendaftaran');
+      return;
+    }
+    if (registerForm.regPassword.length < 6) {
+      toast.error('Password minimal 6 karakter');
+      return;
+    }
+    if (registerForm.regPassword !== registerForm.confirmPassword) {
+      toast.error('Konfirmasi password tidak sesuai');
+      return;
+    }
+
+    setRegisterLoading(true);
+    setTimeout(() => {
+      toast.success('Data awal tersimpan. Lanjutkan verifikasi di halaman pendaftaran lengkap.');
+      setRegisterLoading(false);
+      setActiveTab('login');
+      navigate('/admin/register', { state: registerForm });
+    }, 1200);
+  };
+
+  const isRegisterMode = activeTab === 'register';
+
+  return <div className="relative min-h-screen bg-[#0f3d4d] bg-[radial-gradient(circle_at_top,_#1b5670,_#0f2a34)] flex items-center justify-center px-4 py-10">
+      <div className="absolute top-6 left-6">
+        <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="flex items-center gap-2 bg-white/10 text-white hover:bg-white/20">
           <ArrowLeft size={16} />
           Kembali ke Beranda
         </Button>
       </div>
 
-      <div className="w-full max-w-md">
-        <Card className="shadow-lg border-0 transform transition-all duration-300 hover:shadow-xl">
-          <CardHeader className="space-y-1 text-center bg-primary text-primary-foreground rounded-t-lg p-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/path/to/pattern.svg')] opacity-10 mix-blend-overlay"></div>
-            <div className="relative z-10">
-            <CardTitle className="text-3xl font-bold text-white">Portal Admin</CardTitle>
-            <CardDescription className="text-white/90 mt-2">
-              Masuk untuk mengelola sistem
-            </CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-6 px-8">
-          <form onSubmit={handleLogin}>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username" className="text-sm font-medium text-foreground">Username</Label>
-                <Input id="username" placeholder="Masukkan username admin" value={username} onChange={e => setUsername(e.target.value)} required autoComplete="username" className="border-border focus:border-primary focus:ring-2 focus:ring-primary/20" />
+      <div className="relative w-full max-w-6xl bg-white/10 backdrop-blur-xl rounded-[40px] shadow-2xl border border-white/20 overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
+          {/* Left panel */}
+          <div className="w-full lg:w-1/2 p-6 sm:p-10">
+            <div className="flex flex-col gap-6">
+              <div>
+                <p className="text-sm uppercase tracking-[0.3em] text-white/60">Portal Pengelola</p>
+                <h1 className="text-3xl font-bold text-white mt-2">Swarnapas Control Center</h1>
+                <p className="text-white/70 text-sm mt-2">Kelola destinasi, UMKM, dan agenda Lampung Timur melalui satu pintu.</p>
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-sm font-medium text-foreground">Password</Label>
-                  <Button type="button" variant="link" className="text-xs p-0 h-auto text-muted-foreground hover:text-primary" onClick={() => setShowForgotPasswordDialog(true)}>
-                    Lupa Password?
-                  </Button>
-                </div>
-                <div className="relative">
-                  <Input id="password" type={showPassword ? "text" : "password"} placeholder="Masukkan password" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" className="pr-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20" />
-                  <button type="button" className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground" onClick={() => setShowPassword(!showPassword)}>
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
+
+              <div className="flex bg-white rounded-full shadow-inner overflow-hidden text-sm font-semibold">
+                <button className={cn('flex-1 py-3 transition-all duration-300', activeTab === 'login' ? 'bg-primary text-white' : 'text-slate-500')} onClick={() => setActiveTab('login')}>
+                  Masuk
+                </button>
+                <button className={cn('flex-1 py-3 transition-all duration-300', activeTab === 'register' ? 'bg-primary text-white' : 'text-slate-500')} onClick={() => setActiveTab('register')}>
+                  Daftar Pengelola
+                </button>
+              </div>
+
+              <div className="relative min-h-[480px] [perspective:2000px]">
+                <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d]" style={{ transform: isRegisterMode ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
+                  {/* Login face */}
+                  <div className="absolute inset-0 bg-white rounded-[32px] shadow-xl px-8 py-10 space-y-6 [backface-visibility:hidden]">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Masuk</p>
+                      <h2 className="text-2xl font-bold text-slate-900 mt-1">Mulai Pengelolaan</h2>
+                      <p className="text-sm text-slate-500">Gunakan akun resmi yang Anda miliki.</p>
+                    </div>
+
+                    <form onSubmit={handleLogin} className="space-y-5">
+                      <div className="space-y-2">
+                        <Label htmlFor="username" className="text-xs uppercase tracking-wide text-slate-500">Username</Label>
+                        <Input id="username" placeholder="adminlampungtimur" value={username} onChange={e => setUsername(e.target.value)} required autoComplete="username" className="border-slate-200 focus-visible:ring-primary" />
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs uppercase tracking-wide text-slate-500">
+                          <Label htmlFor="password">Password</Label>
+                          <button type="button" className="text-primary hover:underline" onClick={() => setShowForgotPasswordDialog(true)}>
+                            Lupa Password?
+                          </button>
+                        </div>
+                        <div className="relative">
+                          <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" className="pr-12 border-slate-200 focus-visible:ring-primary" />
+                          <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" onClick={() => setShowPassword(!showPassword)}>
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </button>
+                        </div>
+                      </div>
+
+                      <Button type="submit" className="w-full h-12 bg-slate-900 text-white rounded-full shadow-lg shadow-primary/20" disabled={isLoading}>
+                        {isLoading ? (
+                          <span className="flex items-center gap-2">
+                            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Memproses...
+                          </span>
+                        ) : (
+                          <span className="flex items-center justify-center gap-2 font-semibold">
+                            <LogIn size={18} />
+                            Masuk Dashboard
+                          </span>
+                        )}
+                      </Button>
+
+                      <p className="text-xs text-slate-400 leading-relaxed">
+                        Sistem ini hanya diperuntukkan bagi pengelola resmi Swarnapas. Aktivitas akan direkam untuk tujuan keamanan.
+                      </p>
+                    </form>
+                  </div>
+
+                  {/* Register face */}
+                  <div className="absolute inset-0 bg-white rounded-[32px] shadow-xl px-8 py-10 space-y-6 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.4em] text-slate-400">Daftar</p>
+                      <h2 className="text-2xl font-bold text-slate-900 mt-1">Ajukan Akun Pengelola</h2>
+                      <p className="text-sm text-slate-500">Isikan data usaha/instansi Anda untuk diverifikasi oleh tim kami.</p>
+                    </div>
+
+                    <form onSubmit={handleRegisterSubmit} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs uppercase tracking-wide text-slate-500">Nama UMKM / Instansi</Label>
+                        <div className="relative">
+                          <Input placeholder="Contoh: UMKM Batik Sukadana" value={registerForm.organization} onChange={e => setRegisterForm(prev => ({ ...prev, organization: e.target.value }))} className="pl-10 border-slate-200 focus-visible:ring-primary" required />
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs uppercase tracking-wide text-slate-500">PIC</Label>
+                          <Input placeholder="Nama penanggung jawab" value={registerForm.fullName} onChange={e => setRegisterForm(prev => ({ ...prev, fullName: e.target.value }))} className="border-slate-200 focus-visible:ring-primary" required />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs uppercase tracking-wide text-slate-500">No. WhatsApp</Label>
+                          <div className="relative">
+                            <Input placeholder="6281xxxx" value={registerForm.phone} onChange={e => setRegisterForm(prev => ({ ...prev, phone: e.target.value }))} className="pl-10 border-slate-200 focus-visible:ring-primary" required />
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs uppercase tracking-wide text-slate-500">Email Aktif</Label>
+                        <div className="relative">
+                          <Input type="email" placeholder="nama@domain.com" value={registerForm.email} onChange={e => setRegisterForm(prev => ({ ...prev, email: e.target.value }))} className="pl-10 border-slate-200 focus-visible:ring-primary" required />
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-xs uppercase tracking-wide text-slate-500">Password</Label>
+                          <Input type="password" placeholder="Minimal 6 karakter" value={registerForm.regPassword} onChange={e => setRegisterForm(prev => ({ ...prev, regPassword: e.target.value }))} className="border-slate-200 focus-visible:ring-primary" required />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-xs uppercase tracking-wide text-slate-500">Konfirmasi</Label>
+                          <Input type="password" placeholder="Ulangi password" value={registerForm.confirmPassword} onChange={e => setRegisterForm(prev => ({ ...prev, confirmPassword: e.target.value }))} className="border-slate-200 focus-visible:ring-primary" required />
+                        </div>
+                      </div>
+
+                      <Button type="submit" disabled={registerLoading} className="w-full h-12 rounded-full bg-primary text-white shadow-lg shadow-primary/30">
+                        {registerLoading ? 'Mengirim...' : 'Ajukan Akun Pengelola'}
+                      </Button>
+
+                      <p className="text-xs text-slate-400">Tim Swarnapas akan memverifikasi data Anda dalam 1x24 jam kerja.</p>
+                    </form>
+                  </div>
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300" disabled={isLoading}>
-                {isLoading ? <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Memproses...
-                  </span> : <span className="flex items-center justify-center">
-                    <LogIn className="mr-2" size={18} />
-                    Login
-                  </span>}
-              </Button>
             </div>
-          </form>
-        </CardContent>
-        <CardFooter className="border-t py-4 px-8 text-center">
-          <div className="w-full flex flex-col items-center">
-            <p className="text-sm text-muted-foreground mb-3">Belum punya akun pengelola UMKM?</p>
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => navigate('/admin/register')}>
-              <UserPlus size={16} />
-              Daftar sebagai Pengelola UMKM
-            </Button>
           </div>
-        </CardFooter>
-      </Card>
-      
-      <div className="text-center mt-6 text-muted-foreground text-sm">
-        Administrator system. Gunakan kredensial yang diberikan oleh pihak berwenang.
+
+          {/* Right visual panel */}
+          <div className="relative w-full lg:w-1/2 min-h-[520px] bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80')" }}>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/70" />
+            <div className="relative z-10 h-full flex flex-col justify-between p-10 text-white">
+              <div>
+                <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.4em] bg-white/20 px-4 py-1 rounded-full">
+                  <span className="size-2 rounded-full bg-rose-400 animate-pulse"></span>
+                  Lampung Timur
+                </span>
+                <h2 className="text-3xl font-bold mt-4 leading-tight">Eksplorasi, Kolaborasi, dan Tingkatkan Potensi Daerah.</h2>
+                <p className="text-white/80 mt-3 max-w-sm">Pantau performa UMKM, unggah agenda wisata terbaru, dan wujudkan pelayanan publik yang lebih sigap.</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-6">
+                  <div>
+                    <p className="text-4xl font-bold">120+</p>
+                    <p className="text-sm text-white/70">UMKM aktif</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl font-bold">48</p>
+                    <p className="text-sm text-white/70">Agenda wisata</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl font-bold">15</p>
+                    <p className="text-sm text-white/70">Kecamatan sinergi</p>
+                  </div>
+                </div>
+                <Button variant="secondary" className="bg-white/20 text-white border-white/30 hover:bg-white/30 rounded-full w-fit">
+                  Lihat Potensi Daerah
+                </Button>
+              </div>
+            </div>
+
+            <div className="absolute bottom-4 right-4 flex gap-2">
+              <span className="h-2 w-8 rounded-full bg-white/90" />
+              <span className="h-2 w-2 rounded-full bg-white/40" />
+              <span className="h-2 w-2 rounded-full bg-white/40" />
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
       {/* Forgot Password Dialog */}
       <Dialog open={showForgotPasswordDialog} onOpenChange={setShowForgotPasswordDialog}>

@@ -22,7 +22,7 @@ const paymentMethods = {
   bank: {
     name: "Bank BCA",
     accountNumber: "1234567890",
-    accountName: "UMKM Lampung Selatan"
+    accountName: "UMKM Lampung Timur"
   }
 };
 const ProductPaymentPage = () => {
@@ -96,11 +96,11 @@ const ProductPaymentPage = () => {
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(18);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('UMKM LAMPUNG SELATAN', 20, 15);
+    pdf.text('UMKM LAMPUNG TIMUR', 20, 15);
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('Website: www.lampungselatan.com', 20, 22);
-    pdf.text('Email: info@lampungselatan.com', 20, 28);
+    pdf.text('Website: www.lampungtimur.com', 20, 22);
+    pdf.text('Email: info@lampungtimur.com', 20, 28);
 
     // Invoice Title (Right)
     pdf.setFillColor(lightGray[0], lightGray[1], lightGray[2]);
@@ -255,7 +255,7 @@ const ProductPaymentPage = () => {
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(8);
     pdf.text('Hubungi: ' + productData.umkmPhone, 20, footerY + 8);
-    pdf.text('Website: www.lampungselatan.com', pageWidth - 80, footerY + 8);
+    pdf.text('Website: www.lampungtimur.com', pageWidth - 80, footerY + 8);
     pdf.save(`Invoice-${productData.orderId}.pdf`);
     toast({
       title: "Invoice berhasil diunduh",

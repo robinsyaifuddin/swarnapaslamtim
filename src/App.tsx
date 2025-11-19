@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect, lazy, Suspense } from "react";
 import { AuthProvider } from "./hooks/useAuth";
+import ChatbotWidget from "@/components/ChatbotWidget";
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Destinasi = lazy(() => import("./pages/Destinasi"));
@@ -92,6 +93,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
           </Suspense>
+          <ChatbotWidget />
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>

@@ -142,24 +142,6 @@ const Informasi = () => {
           </div>
         </section>
 
-        {/* Newsletter Section */}
-        <section className="py-16 bg-gradient-to-r from-lamsel-blue to-blue-700">
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-2xl mx-auto text-white">
-              <h2 className="text-3xl font-bold mb-4">Jangan Lewatkan Berita Terbaru</h2>
-              <p className="text-xl opacity-90 mb-8">
-                Berlangganan newsletter kami untuk mendapatkan informasi terkini langsung di email Anda
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <Input type="email" placeholder="Masukkan email Anda" className="flex-1 h-12 bg-white/10 border-white/20 text-white placeholder:text-white/70 focus:bg-white/20" />
-                <Button size="lg" className="bg-white text-lamsel-blue hover:bg-gray-100 font-semibold px-8">
-                  Berlangganan
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       
       <Footer />

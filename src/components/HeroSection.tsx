@@ -37,19 +37,18 @@ export const HeroSection = () => {
         style={{ backgroundImage: `url(${heroBackground})` }}
       />
 
-      {/* Optimized Video Background (uses if available, otherwise GIF shows) */}
+      {/* Video Background utama dari public/Video/background-hero.mp4 */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         poster={heroBackground}
       >
-        <source src="/videos/hero-bg.webm" type="video/webm" />
-        <source src="/videos/hero-bg.mp4" type="video/mp4" />
-        {/* If no video available, browser falls back to underlying GIF */}
+        <source src="/Video/background-hero.mp4" type="video/mp4" />
+        {/* Jika video tidak bisa dimuat, browser akan menampilkan GIF di bawahnya */}
       </video>
       
       {/* Gradient overlay for better text readability */}

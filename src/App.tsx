@@ -27,6 +27,9 @@ const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminRegister = lazy(() => import("./pages/AdminRegister"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const ManagerDashboard = lazy(() => import("./pages/ManagerDashboard"));
+const UMKMDetailPage = lazy(() => import("./pages/UMKMDetailPage"));
+const DestinationDetailPage = lazy(() => import("./pages/DestinationDetailPage"));
 const AdminDestinasi = lazy(() => import("./pages/AdminDestinasi"));
 const AdminAgenda = lazy(() => import("./pages/AdminAgenda"));
 const AdminUMKM = lazy(() => import("./pages/AdminUMKM"));
@@ -79,6 +82,9 @@ const App = () => (
             <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="manager" element={<ManagerDashboard />} />
+              <Route path="umkm/:id" element={<UMKMDetailPage />} />
+              <Route path="destinasi/:id" element={<DestinationDetailPage />} />
               <Route path="destinasi" element={<AdminDestinasi />} />
               <Route path="agenda" element={<AdminAgenda />} />
               <Route path="umkm" element={<AdminUMKM />} />

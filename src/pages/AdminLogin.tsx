@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,42 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { authService } from '@/services/authService';
 import { cn } from '@/lib/utils';
 import Navbar from '@/components/Navbar';
+
+const heroSlides = [
+  {
+    badge: 'Lampung Timur',
+    title: 'Eksplorasi, Kolaborasi, dan Tingkatkan Potensi Daerah.',
+    description: 'Pantau performa UMKM, unggah agenda wisata terbaru, dan wujudkan pelayanan publik yang lebih sigap.',
+    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+    stats: [
+      { label: 'UMKM aktif', value: '120+' },
+      { label: 'Agenda wisata', value: '48' },
+      { label: 'Kecamatan sinergi', value: '15' }
+    ]
+  },
+  {
+    badge: 'Pantai Kerang Mas',
+    title: 'Pantai timur dengan sunrise terbaik siap menyambut wisatawan.',
+    description: 'Aktivitas komunitas pesisir dan UMKM olahan laut terus berkembang setiap minggunya.',
+    image: 'https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=1200&q=80',
+    stats: [
+      { label: 'Pengunjung/minggu', value: '800+' },
+      { label: 'UMKM kuliner', value: '26' },
+      { label: 'Event pesisir', value: '9' }
+    ]
+  },
+  {
+    badge: 'Way Kambas',
+    title: 'Konservasi satwa dan wisata edukasi berjalan berdampingan.',
+    description: 'Kolaborasi pengelola daerah menjaga keberlanjutan habitat gajah sumatera.',
+    image: 'https://images.unsplash.com/photo-1479688895406-3f032f15f0ef?auto=format&fit=crop&w=1200&q=80',
+    stats: [
+      { label: 'Relawan aktif', value: '65' },
+      { label: 'Program edukasi', value: '14' },
+      { label: 'Ekspedisi riset', value: '6' }
+    ]
+  }
+];
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +63,7 @@ const AdminLogin = () => {
     regPassword: '',
     confirmPassword: ''
   });
+  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,12 +75,9 @@ const AdminLogin = () => {
       });
       if (result.success) {
         toast.success(result.message);
-        // Navigate based on user role
-        if (result.user.role === 'central') {
-          navigate('/admin/dashboard');
-        } else {
-          navigate('/admin/umkm');
-        }
+        // Semua akun diarahkan terlebih dahulu ke dashboard.
+        // AdminDashboard akan mengarahkan akun pengelola ke /admin/manager jika diperlukan.
+        navigate('/admin/dashboard');
       } else {
         toast.error(result.message);
       }
@@ -92,6 +126,13 @@ const AdminLogin = () => {
   const isRegisterMode = activeTab === 'register';
 
   const brandGreen = '#6ddab3';
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
   const heroContent = activeTab === 'login'
     ? {
         badge: 'Masuk',
@@ -107,11 +148,11 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="flex items-center justify-center px-4 sm:px-6 lg:px-10 py-6 lg:py-16">
-        <div className="relative w-full max-w-6xl 2xl:max-w-7xl bg-gradient-to-br from-white via-white to-[#eefbf5] rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] shadow-[0_25px_80px_rgba(0,0,0,0.2)] border border-white/60 overflow-hidden">
-          <div className="flex flex-col lg:flex-row">
+      <div className="flex items-center justify-center px-3 sm:px-6 lg:px-12 py-6 lg:py-16">
+        <div className="relative w-full max-w-[1400px] bg-gradient-to-br from-white via-white to-[#eefbf5] rounded-[28px] sm:rounded-[36px] lg:rounded-[44px] shadow-[0_25px_80px_rgba(0,0,0,0.2)] border border-white/60 overflow-hidden">
+          <div className="flex flex-col lg:flex-row items-stretch">
             {/* Left panel */}
-            <div className="w-full lg:w-1/2 p-5 sm:p-8 lg:p-10">
+            <div className="w-full lg:w-7/12 p-5 sm:p-8 lg:p-12">
               <div className="flex flex-col gap-6">
                 <div>
                   <p className="text-xs sm:text-sm uppercase tracking-[0.3em]" style={{ color: brandGreen }}>{heroContent.badge}</p>
@@ -130,10 +171,10 @@ const AdminLogin = () => {
                   </button>
                 </div>
 
-                <div className="relative min-h-[520px] sm:min-h-[540px] [perspective:2000px]">
+                <div className="relative min-h-[520px] sm:min-h-[560px] [perspective:2000px]">
                   <div className="relative h-full w-full transition-transform duration-700 [transform-style:preserve-3d]" style={{ transform: isRegisterMode ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
                     {/* Login face */}
-                  <div className="absolute inset-0 bg-white rounded-[28px] sm:rounded-[32px] shadow-xl px-6 sm:px-8 py-8 sm:py-10 space-y-6 [backface-visibility:hidden]">
+                  <div className="absolute inset-0 px-4 sm:px-8 py-8 sm:py-10 space-y-6 [backface-visibility:hidden]">
                     <form onSubmit={handleLogin} className="space-y-5">
 
                       <div className="space-y-2">
@@ -177,7 +218,7 @@ const AdminLogin = () => {
                     </div>
 
                   {/* Register face */}
-                  <div className="absolute inset-0 bg-white rounded-[28px] sm:rounded-[32px] shadow-xl px-6 sm:px-8 py-8 sm:py-10 space-y-6 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
+                  <div className="absolute inset-0 px-4 sm:px-8 py-8 sm:py-10 space-y-6 [backface-visibility:hidden]" style={{ transform: 'rotateY(180deg)' }}>
                     <form onSubmit={handleRegisterSubmit} className="space-y-4">
 
                       <div className="space-y-2">
@@ -234,43 +275,50 @@ const AdminLogin = () => {
             </div>
 
             {/* Right visual panel */}
-            <div className="relative w-full lg:w-1/2 min-h-[360px] sm:min-h-[420px] lg:min-h-[520px] bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80')" }}>
+            <div className="relative w-full lg:w-5/12 min-h-[360px] sm:min-h-[420px] lg:min-h-[560px] overflow-hidden">
+              <div className="absolute inset-0">
+                {heroSlides.map((slide, index) => (
+                  <div
+                    key={slide.title}
+                    className={cn(
+                      'absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out',
+                      currentSlide === index ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    )}
+                    style={{ backgroundImage: `url(${slide.image})` }}
+                  />
+                ))}
+              </div>
               <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/40 to-black/80" />
               <div className="relative z-10 h-full flex flex-col justify-between p-6 sm:p-8 lg:p-10 text-white">
                 <div>
                   <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.4em] bg-white/20 px-4 py-1 rounded-full">
-                    <span className="size-2 rounded-full bg-rose-400 animate-pulse"></span>
-                    Lampung Timur
+                    <span className="size-2 rounded-full bg-rose-400 animate-pulse" />
+                    {heroSlides[currentSlide].badge}
                   </span>
-                  <h2 className="text-3xl font-bold mt-4 leading-tight">Eksplorasi, Kolaborasi, dan Tingkatkan Potensi Daerah.</h2>
-                  <p className="text-white/80 mt-3 max-w-sm">Pantau performa UMKM, unggah agenda wisata terbaru, dan wujudkan pelayanan publik yang lebih sigap.</p>
+                  <h2 className="text-3xl font-bold mt-4 leading-tight max-w-sm">{heroSlides[currentSlide].title}</h2>
+                  <p className="text-white/80 mt-3 max-w-sm">{heroSlides[currentSlide].description}</p>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-6">
-                    <div>
-                      <p className="text-4xl font-bold">120+</p>
-                      <p className="text-sm text-white/70">UMKM aktif</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-bold">48</p>
-                      <p className="text-sm text-white/70">Agenda wisata</p>
-                    </div>
-                    <div>
-                      <p className="text-4xl font-bold">15</p>
-                      <p className="text-sm text-white/70">Kecamatan sinergi</p>
-                    </div>
+                  <div className="flex items-center gap-6 flex-wrap">
+                    {heroSlides[currentSlide].stats.map(stat => (
+                      <div key={stat.label}>
+                        <p className="text-4xl font-bold">{stat.value}</p>
+                        <p className="text-sm text-white/70">{stat.label}</p>
+                      </div>
+                    ))}
                   </div>
-                  <Button variant="secondary" className="bg-white/20 text-white border-white/30 hover:bg-white/30 rounded-full w-fit">
-                    Lihat Potensi Daerah
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    {heroSlides.map((_, index) => (
+                      <button
+                        key={index}
+                        className={cn('h-1.5 rounded-full transition-all duration-300', currentSlide === index ? 'w-8 bg-white' : 'w-2 bg-white/40')}
+                        onClick={() => setCurrentSlide(index)}
+                        aria-label={`Slide ${index + 1}`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div className="absolute bottom-4 right-4 flex gap-2">
-                <span className="h-2 w-8 rounded-full bg-white/90" />
-                <span className="h-2 w-2 rounded-full bg-white/40" />
-                <span className="h-2 w-2 rounded-full bg-white/40" />
               </div>
             </div>
           </div>

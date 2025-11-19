@@ -68,7 +68,7 @@ const Kecamatan = () => {
         <div className="mb-8 max-w-xl mx-auto">
           <label className="block text-sm font-medium mb-2">Pilih Kecamatan:</label>
           <Select value={selectedDistrictId} onValueChange={handleDistrictChange}>
-            <SelectTrigger className="w-full h-12 text-lg">
+            <SelectTrigger className="w-full h-12 md:h-11 text-base md:text-lg rounded-xl shadow-sm border-gray-200 bg-white">
               <SelectValue placeholder="Pilih kecamatan..." />
             </SelectTrigger>
             <SelectContent className="max-h-[400px]">
@@ -93,7 +93,6 @@ const Kecamatan = () => {
             <Tabs defaultValue="profile" className="w-full">
               <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
                 <TabsTrigger value="profile">Profil</TabsTrigger>
-                <TabsTrigger value="contact">Kontak</TabsTrigger>
                 <TabsTrigger value="attractions">Wisata</TabsTrigger>
                 <TabsTrigger value="products">Produk</TabsTrigger>
               </TabsList>
@@ -140,9 +139,8 @@ const Kecamatan = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </TabsContent>
-              
-              <TabsContent value="contact">
+
+                {/* Informasi kontak dipindah ke dalam tab Profil */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Informasi Kontak</CardTitle>

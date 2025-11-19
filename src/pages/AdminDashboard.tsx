@@ -103,8 +103,15 @@ const AdminDashboard = () => {
     if (!isLoggedIn) {
       toast.error('Anda harus login terlebih dahulu!');
       navigate('/admin/login');
+      return;
     }
-  }, [navigate]);
+
+    // Redirect hanya untuk akun pengelola (manager) UMKM & Pariwisata
+    if (adminUsername === 'pengelolaumkmwisata') {
+      navigate('/admin/manager');
+      return;
+    }
+  }, [navigate, adminUsername]);
 
   const handleQuickAction = (action: string, path: string) => {
     toast.success(`Mengarahkan ke ${action}...`);

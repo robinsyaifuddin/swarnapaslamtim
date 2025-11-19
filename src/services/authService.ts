@@ -53,6 +53,24 @@ export const authService = {
         return { user, success: true, message: 'Login berhasil!' }
       }
 
+      // Demo combined UMKM & Tourism Manager Account
+      if (credentials.username === 'pengelolaumkmwisata' && credentials.password === 'umkmwisata') {
+        const user: AdminUser = {
+          id: '3',
+          username: 'pengelolaumkmwisata',
+          email: 'pengelola@lampungtimurkab.go.id',
+          role: 'umkm'
+        }
+        
+        // Store session
+        sessionStorage.setItem('adminLoggedIn', 'true')
+        sessionStorage.setItem('adminUsername', user.username)
+        sessionStorage.setItem('adminType', user.role)
+        sessionStorage.setItem('adminId', user.id)
+        
+        return { user, success: true, message: 'Login berhasil!' }
+      }
+
       // Try database authentication only if Supabase is ready
       if (isSupabaseReady() && supabase) {
         const { data: users, error } = await supabase

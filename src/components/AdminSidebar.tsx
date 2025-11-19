@@ -79,13 +79,12 @@ const AdminSidebar = ({ isOpen, toggleSidebar, isUMKMAdmin = false }: AdminSideb
       } ${isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}`}
     >
       <div className="p-2 sm:p-4 flex items-center justify-between border-b h-14 sm:h-16">
-        <div className={`flex items-center space-x-2 ${!isOpen && 'justify-center w-full'}`}>
-          <div className="rounded-full bg-primary p-1.5 sm:p-2 shadow-md flex-shrink-0">
-            <span className="text-sm sm:text-lg font-bold text-white">PS</span>
-          </div>
-          {isOpen && (
-            <span className="text-sm sm:text-lg font-bold text-lamsel-dark truncate">Admin Lampung Timur</span>
-          )}
+        <div className={`flex items-center ${!isOpen ? 'justify-center w-full' : 'space-x-2'}`}>
+          <img
+            src="/Logo%20Kabupaten%20Lampung%20Timur.png"
+            alt="Logo Kabupaten Lampung Timur"
+            className="w-8 h-8 sm:w-9 sm:h-9 object-contain"
+          />
         </div>
         {isOpen && (
           <Button

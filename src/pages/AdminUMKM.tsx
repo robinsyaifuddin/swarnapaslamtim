@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,7 +102,8 @@ const AdminUMKM = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [currentTab, setCurrentTab] = useState('general');
+  const [currentTab, setCurrentTab] = useState('manajemen');
+  const [showGuide, setShowGuide] = useState(false);
   const [formData, setFormData] = useState({
     // General Info
     name: '',
@@ -142,6 +143,8 @@ const AdminUMKM = () => {
     }[]
   });
 
+  const adminUsername = sessionStorage.getItem('adminUsername');
+
   const filteredData = umkmData.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -172,7 +175,7 @@ const AdminUMKM = () => {
       products: [],
       reviews: []
     });
-    setCurrentTab('general');
+    setCurrentTab('manajemen');
     setShowForm(true);
   };
 
@@ -201,7 +204,7 @@ const AdminUMKM = () => {
         products: productDummyData,
         reviews: reviewDummyData
       });
-      setCurrentTab('general');
+      setCurrentTab('manajemen');
       setShowForm(true);
     }
   };
@@ -219,6 +222,14 @@ const AdminUMKM = () => {
       toast.success(`UMKM baru "${formData.name}" berhasil ditambahkan`);
     }
     setShowForm(false);
+    
+    // Navigate back to manager dashboard jika akun adalah pengelola UMKM & wisata
+    const adminUsername = sessionStorage.getItem('adminUsername');
+    if (adminUsername === 'pengelolaumkmwisata') {
+      setTimeout(() => {
+        window.location.href = '/admin/manager';
+      }, 1500);
+    }
   };
 
   const handleCancel = () => {
@@ -305,6 +316,17 @@ const AdminUMKM = () => {
     toast.success("Ulasan berhasil dihapus");
   };
 
+  // Untuk akun pengelolaumkmwisata, langsung buka tampilan manajemen UMKM (tanpa daftar tabel)
+  useEffect(() => {
+    if (adminUsername === 'pengelolaumkmwisata' && !showForm && !editingId) {
+      // Gunakan UMKM pertama sebagai contoh yang dikelola
+      const firstUmkm = umkmData[0];
+      if (firstUmkm) {
+        handleEdit(firstUmkm.id);
+      }
+    }
+  }, [adminUsername, showForm, editingId]);
+
   // Handle social media update
   const handleSocialMediaUpdate = (platform: string, value: string) => {
     setFormData({
@@ -338,53 +360,164 @@ const AdminUMKM = () => {
           <h1 className="text-2xl font-bold">Kelola UMKM</h1>
           <p className="text-muted-foreground">Kelola semua UMKM di Lampung Timur</p>
         </div>
-        <Button onClick={handleAddNew} className="shadow-md hover:shadow-lg transition-all">
-          <Plus className="mr-2 h-4 w-4" /> Tambah UMKM
-        </Button>
       </div>
 
-      {showForm ? (
-        <Card className="border shadow-lg animate-fade-in">
-          <CardHeader className="pb-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <CardTitle>{editingId ? 'Edit UMKM' : 'Tambah UMKM Baru'}</CardTitle>
-                <CardDescription>
-                  {editingId 
-                    ? 'Perbarui informasi UMKM yang sudah ada' 
-                    : 'Lengkapi informasi untuk menambahkan UMKM baru'}
-                </CardDescription>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleCancel}>
-                  <X className="mr-1 h-4 w-4" /> Batal
-                </Button>
-                <Button type="submit" size="sm" form="umkmForm" className="bg-lamsel-green hover:bg-lamsel-green/80">
-                  <Save className="mr-1 h-4 w-4" /> Simpan
-                </Button>
-              </div>
+      {/* Tampilan UMKM Saya dengan dua tab Manajemen & Produk */}
+      <Card className="border shadow-lg animate-fade-in">
+        <CardHeader className="pb-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>{editingId ? 'Edit UMKM' : 'Tambah UMKM Baru'}</CardTitle>
+              <CardDescription>
+                {editingId
+                  ? 'Perbarui informasi UMKM yang sudah ada'
+                  : 'Lengkapi informasi untuk menambahkan UMKM baru'}
+              </CardDescription>
             </div>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-              <TabsList className="w-full mb-6">
-                <TabsTrigger value="general" className="flex items-center gap-1">
-                  <Store className="h-4 w-4" /> Informasi Umum
-                </TabsTrigger>
-                <TabsTrigger value="products" className="flex items-center gap-1">
-                  <Package className="h-4 w-4" /> Produk
-                </TabsTrigger>
-                <TabsTrigger value="reviews" className="flex items-center gap-1">
-                  <Star className="h-4 w-4" /> Ulasan
-                </TabsTrigger>
-                <TabsTrigger value="about" className="flex items-center gap-1">
-                  <Info className="h-4 w-4" /> Tentang UMKM
-                </TabsTrigger>
-              </TabsList>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                type="button"
+                onClick={() => setShowGuide(!showGuide)}
+              >
+                <Info className="mr-1 h-4 w-4" /> Panduan Kelola UMKM
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                className="bg-lamsel-green hover:bg-lamsel-green/80"
+                onClick={() => {
+                  handleAddProduct();
+                  setCurrentTab('produk');
+                }}
+              >
+                <Plus className="mr-1 h-4 w-4" /> Tambah Produk
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+            <TabsList className="w-full mb-6 grid grid-cols-2">
+              <TabsTrigger value="manajemen" className="flex items-center gap-1">
+                <Store className="h-4 w-4" /> Manajemen
+              </TabsTrigger>
+              <TabsTrigger value="produk" className="flex items-center gap-1">
+                <Package className="h-4 w-4" /> Produk
+              </TabsTrigger>
+            </TabsList>
 
-              <form id="umkmForm" onSubmit={handleSubmit}>
-                {/* General Information Tab */}
-                <TabsContent value="general" className="space-y-6">
+            {showGuide && (
+              <Card className="mb-6 border-dashed bg-muted/40">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Panduan Singkat Kelola UMKM</CardTitle>
+                  <CardDescription className="text-xs">
+                    Ikuti langkah berikut untuk mengelola profil UMKM dan produk Anda.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-xs space-y-1">
+                  <p>1. Pada tab <strong>Manajemen</strong>, lengkapi informasi profil UMKM (nama, pemilik, kontak, alamat, dan deskripsi).</p>
+                  <p>2. Simpan perubahan dengan tombol <strong>Simpan</strong> di pojok kanan atas.</p>
+                  <p>3. Pindah ke tab <strong>Produk</strong> untuk menambahkan dan mengelola daftar produk.</p>
+                  <p>4. Gunakan tombol <strong>Tambah Produk</strong> untuk membuat kartu produk baru, lalu isi nama, harga, dan deskripsi.</p>
+                  <p>5. Jika semua sudah sesuai, pastikan status produk aktif agar tampil di halaman UMKM publik.</p>
+                </CardContent>
+              </Card>
+            )}
+
+            <form id="umkmForm" onSubmit={handleSubmit}>
+              {/* Tab Manajemen: trafik, pelanggan, dan informasi UMKM */}
+              <TabsContent value="manajemen" className="space-y-8">
+                  {/* Ringkasan trafik & pelanggan (demo) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className="bg-primary/5 border-none shadow-none">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Kunjungan Profil UMKM</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-2xl font-bold">842x</p>
+                        <p className="text-xs text-muted-foreground mt-1">Total dilihat oleh pengguna</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-none shadow-none">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Pelanggan Potensial</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-2xl font-bold">32</p>
+                        <p className="text-xs text-muted-foreground mt-1">Pengguna yang menghubungi UMKM</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="border-none shadow-none">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Rating Rata-rata</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2">
+                          {renderStars(4.8)}
+                          <span className="text-sm font-semibold">4.8</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">Berdasarkan ulasan pelanggan</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Daftar pelanggan sederhana (demo) */}
+                  <Card className="border shadow-sm">
+                    <CardHeader className="pb-3 flex flex-row items-center justify-between">
+                      <CardTitle className="text-base">Daftar Pelanggan</CardTitle>
+                      <span className="text-xs text-muted-foreground">Data contoh untuk simulasi manajemen pelanggan</span>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="rounded-md border overflow-hidden">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-muted/40">
+                              <TableHead className="w-10 text-center">#</TableHead>
+                              <TableHead>Nama</TableHead>
+                              <TableHead className="hidden md:table-cell">Kontak</TableHead>
+                              <TableHead>Status</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {[{
+                              name: 'Andi Prasetyo',
+                              phone: '6281234567890',
+                              email: 'andi@example.com',
+                              status: 'Sudah membeli'
+                            }, {
+                              name: 'Sinta Lestari',
+                              phone: '6285678901234',
+                              email: 'sinta@example.com',
+                              status: 'Menghubungi UMKM'
+                            }, {
+                              name: 'Budi Santoso',
+                              phone: '628111223344',
+                              email: 'budi@example.com',
+                              status: 'Pelanggan tetap'
+                            }].map((c, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="text-center text-xs">{index + 1}</TableCell>
+                                <TableCell className="text-sm font-medium">{c.name}</TableCell>
+                                <TableCell className="hidden md:table-cell text-xs">
+                                  <div>{c.phone}</div>
+                                  <div className="text-muted-foreground">{c.email}</div>
+                                </TableCell>
+                                <TableCell className="text-xs">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                                    {c.status}
+                                  </span>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Form informasi UMKM (mengikuti layout referensi profil UMKM publik) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="name">Nama UMKM</Label>
@@ -523,8 +656,8 @@ const AdminUMKM = () => {
                   </div>
                 </TabsContent>
 
-                {/* Products Tab */}
-                <TabsContent value="products" className="space-y-6">
+                {/* Tab Produk: daftar produk dengan kartu ala halaman publik */}
+                <TabsContent value="produk" className="space-y-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-medium">Daftar Produk</h3>
                     <Button 
@@ -542,77 +675,82 @@ const AdminUMKM = () => {
                       <p className="mt-2 text-gray-600">Belum ada produk. Tambahkan produk untuk UMKM ini.</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {formData.products.map((product, index) => (
-                        <Card key={product.id} className="overflow-hidden">
-                          <div className="p-4 bg-gray-50 border-b flex justify-between items-center">
-                            <h4 className="font-medium">Produk #{index + 1}</h4>
-                            <Button 
-                              type="button" 
-                              variant="ghost" 
-                              size="icon"
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                              onClick={() => handleDeleteProduct(index)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                        <Card key={product.id} className="overflow-hidden shadow-sm hover:shadow-md transition-all">
+                          <div className="bg-gray-100 h-40 flex items-center justify-center relative">
+                            <ImagePlus className="h-10 w-10 text-gray-400" />
+                            <input id={`product-image-${index}`} type="file" className="hidden" />
                           </div>
-                          <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor={`product-name-${index}`}>Nama Produk</Label>
-                              <Input 
-                                id={`product-name-${index}`} 
-                                value={product.name} 
-                                onChange={(e) => handleUpdateProduct(index, 'name', e.target.value)}
-                                placeholder="Nama produk" 
-                                required 
-                              />
+                          <CardContent className="p-4 space-y-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1">
+                                <Label className="text-[11px] text-muted-foreground uppercase">Nama Produk</Label>
+                                <Input 
+                                  id={`product-name-${index}`} 
+                                  value={product.name} 
+                                  onChange={(e) => handleUpdateProduct(index, 'name', e.target.value)}
+                                  className="mt-1 h-9 text-sm font-semibold"
+                                  placeholder="Nama produk" 
+                                  required 
+                                />
+                              </div>
+                              <div className="w-28 text-right">
+                                <Label className="text-[11px] text-muted-foreground uppercase">Harga</Label>
+                                <Input 
+                                  id={`product-price-${index}`} 
+                                  type="number"
+                                  value={product.price} 
+                                  onChange={(e) => handleUpdateProduct(index, 'price', Number(e.target.value))}
+                                  className="mt-1 h-9 text-sm font-semibold"
+                                  placeholder="0" 
+                                  required 
+                                />
+                              </div>
                             </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor={`product-price-${index}`}>Harga (Rp)</Label>
-                              <Input 
-                                id={`product-price-${index}`} 
-                                type="number"
-                                value={product.price} 
-                                onChange={(e) => handleUpdateProduct(index, 'price', Number(e.target.value))}
-                                placeholder="Harga produk" 
-                                required 
-                              />
-                            </div>
-
-                            <div className="space-y-2 col-span-1 md:col-span-2">
-                              <Label htmlFor={`product-description-${index}`}>Deskripsi</Label>
+                            <div>
+                              <Label className="text-[11px] text-muted-foreground uppercase">Deskripsi Singkat</Label>
                               <Textarea 
                                 id={`product-description-${index}`} 
                                 value={product.description} 
                                 onChange={(e) => handleUpdateProduct(index, 'description', e.target.value)}
-                                placeholder="Deskripsi produk" 
+                                className="mt-1 min-h-[60px] text-sm"
+                                placeholder="Deskripsi singkat produk" 
                                 required
                               />
                             </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor={`product-image-${index}`}>Foto Produk</Label>
-                              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-                                <ImagePlus className="mx-auto h-8 w-8 text-gray-400" />
-                                <p className="text-xs mt-1 text-gray-500">Klik untuk upload foto</p>
-                                <input id={`product-image-${index}`} type="file" className="hidden" />
-                              </div>
-                            </div>
-
-                            <div className="space-y-2 flex items-center">
+                            <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-2">
                                 <Checkbox 
                                   id={`product-stock-${index}`} 
                                   checked={product.inStock}
                                   onCheckedChange={(checked) => handleUpdateProduct(index, 'inStock', checked)}
                                 />
-                                <Label htmlFor={`product-stock-${index}`} className="text-sm font-normal cursor-pointer">
-                                  Produk tersedia (in stock)
+                                <Label htmlFor={`product-stock-${index}`} className="text-xs cursor-pointer">
+                                  Produk tersedia
                                 </Label>
                               </div>
+                              <Button 
+                                type="button" 
+                                variant="ghost" 
+                                size="icon"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                onClick={() => handleDeleteProduct(index)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
+
+                            <Button 
+                              type="button" 
+                              variant="outline" 
+                              className="w-full mt-1 text-xs md:text-sm"
+                              onClick={() => toast.info('Tampilan ini mensimulasikan tombol "Pesan Produk" di halaman publik')}
+                            >
+                              Pesan Produk
+                            </Button>
                           </CardContent>
                         </Card>
                       ))}
@@ -798,128 +936,7 @@ const AdminUMKM = () => {
             </Tabs>
           </CardContent>
         </Card>
-      ) : (
-        <Card className="shadow-md">
-          <CardHeader className="pb-2">
-            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                  type="search"
-                  placeholder="Cari UMKM..."
-                  className="pl-8 w-full md:w-80"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="rounded-lg h-9">
-                  <Filter className="mr-2 h-4 w-4" /> Filter
-                </Button>
-                <select 
-                  className="h-9 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="all">Semua Kategori</option>
-                  <option value="kerajinan">Kerajinan</option>
-                  <option value="makanan">Makanan & Minuman</option>
-                  <option value="fashion">Fashion</option>
-                </select>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border overflow-hidden">
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      <TableHead className="w-12 text-center">ID</TableHead>
-                      <TableHead className="w-16">Foto</TableHead>
-                      <TableHead>Nama UMKM</TableHead>
-                      <TableHead>Kategori</TableHead>
-                      <TableHead>Pemilik</TableHead>
-                      <TableHead>Kontak</TableHead>
-                      <TableHead>Lokasi</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-center w-28">Aksi</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredData.length > 0 ? (
-                      filteredData.map((umkm) => (
-                        <TableRow key={umkm.id} className="hover:bg-muted/50 transition-colors">
-                          <TableCell className="text-center font-medium">{umkm.id}</TableCell>
-                          <TableCell>
-                            <img 
-                              src={umkm.image} 
-                              alt={umkm.name} 
-                              className="w-10 h-10 rounded-md object-cover border" 
-                            />
-                          </TableCell>
-                          <TableCell className="font-medium">{umkm.name}</TableCell>
-                          <TableCell>{umkm.category}</TableCell>
-                          <TableCell>{umkm.owner}</TableCell>
-                          <TableCell>{umkm.contact}</TableCell>
-                          <TableCell>{umkm.location}</TableCell>
-                          <TableCell>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              umkm.status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                            }`}>
-                              {umkm.status === 'Aktif' ? (
-                                <CheckCircle className="mr-1 h-3 w-3" />
-                              ) : (
-                                <XCircle className="mr-1 h-3 w-3" />
-                              )}
-                              {umkm.status}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex justify-center gap-1">
-                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(umkm.id)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-500">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500" onClick={() => handleDelete(umkm.id)}>
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={9} className="text-center py-6 text-muted-foreground">
-                          Tidak ditemukan data UMKM yang sesuai dengan pencarian
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-            
-            <div className="mt-4 flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Menampilkan {filteredData.length} dari {umkmData.length} UMKM
-              </p>
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm" disabled>
-                  Sebelumnya
-                </Button>
-                <Button variant="outline" size="sm" className="bg-blue-50">
-                  1
-                </Button>
-                <Button variant="outline" size="sm">
-                  Selanjutnya
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+      </div>
   );
 };
 

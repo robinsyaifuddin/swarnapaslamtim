@@ -3,6 +3,45 @@ import { MessageCircle, X, Send, Bot, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+const OFFLINE_FAQ = [
+  {
+    keywords: ["destinasi", "wisata", "tempat wisata"],
+    answer:
+      "Beberapa destinasi populer di Lampung Timur antara lain: Taman Nasional Way Kambas, Pantai Kerang Mas, Danau Kemuning, dan kawasan pesisir Labuhan Maringgai. Di Swarnapas kamu bisa melihat detail destinasi, foto, dan informasi rute.",
+  },
+  {
+    keywords: ["umkm", "produk unggulan", "oleh-oleh"],
+    answer:
+      "UMKM unggulan Lampung Timur meliputi kerajinan tapis, kopi robusta Way Kambas, madu hutan, olahan ikan dan hasil laut, serta aneka camilan seperti keripik singkong dan kemplang. Coba lihat menu UMKM di Swarnapas untuk daftar lengkapnya.",
+  },
+  {
+    keywords: ["agenda", "event", "acara", "kegiatan"],
+    answer:
+      "Agenda wisata Lampung Timur biasanya meliputi festival budaya, kegiatan di kawasan Way Kambas, dan event promosi UMKM lokal. Kamu bisa membuka menu Agenda di Swarnapas untuk melihat jadwal terbaru.",
+  },
+  {
+    keywords: ["cara booking", "cara pesan", "cara memesan", "booking paket"],
+    answer:
+      "Untuk melakukan booking paket wisata atau produk UMKM, kamu bisa memilih destinasi atau produk terlebih dahulu, lalu ikuti tombol pemesanan/booking yang tersedia. Jika masih ragu, gunakan menu Kontak di Swarnapas untuk menghubungi admin.",
+  },
+];
+
+const generateOfflineAnswer = (prompt: string): string => {
+  const lower = prompt.toLowerCase();
+
+  for (const item of OFFLINE_FAQ) {
+    if (item.keywords.some((keyword) => lower.includes(keyword))) {
+      return item.answer;
+    }
+  }
+
+  return (
+    "Saat ini asisten berjalan dalam mode offline tanpa koneksi ke model AI eksternal. " +
+    "Namun kamu tetap bisa menanyakan seputar wisata, UMKM, dan potensi Lampung Timur. " +
+    "Coba tulis pertanyaan yang lebih spesifik, misalnya destinasi yang ingin dikunjungi atau jenis produk UMKM yang kamu cari."
+  );
+};
+
 interface ChatMessage {
   id: string;
   sender: "user" | "bot";
@@ -72,7 +111,7 @@ export const ChatbotWidget = () => {
         id: crypto.randomUUID(),
         sender: "bot",
         text:
-          "Maaf, saya kesulitan mengambil jawaban saat ini. Pastikan server proxy GPT (/api/chatbot) aktif dan API key tersimpan aman.",
+          "Maaf, saya kesulitan mengambil jawaban saat ini. Silakan cek koneksi internet dan pengaturan API key jika menggunakan layanan AI eksternal, lalu coba lagi beberapa saat.",
         timestamp: new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" }),
       };
       setMessages((prev) => [...prev, fallbackMessage]);
@@ -83,28 +122,41 @@ export const ChatbotWidget = () => {
   };
 
   const fetchAiResponse = async (prompt: string) => {
-    const response = await fetch("/api/chatbot", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        prompt,
-        context:
-          "Anda adalah asisten Lampung Timur. Fokus pada informasi wisata, UMKM, potensi daerah, data Swarnapas, dan pertanyaan seputar platform.",
-      }),
-    });
+    let enhancedPrompt = prompt;
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Proxy error ${response.status}: ${errorBody}`);
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      enhancedPrompt = `Konteks halaman saat ini di situs Swarnapas: "${path}". Gunakan konteks ini jika relevan saat menjawab.\n\nPertanyaan pengguna: ${prompt}`;
     }
 
-    const data = await response.json();
-    if (!data?.answer) {
-      throw new Error("Jawaban GPT tidak ditemukan");
+    try {
+      const response = await fetch("/api/chatbot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: enhancedPrompt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.error("Chatbot API error", errorBody);
+        return generateOfflineAnswer(prompt);
+      }
+
+      const data = await response.json();
+      const text = data?.answer;
+      if (typeof text !== "string" || !text.trim()) {
+        return generateOfflineAnswer(prompt);
+      }
+
+      return text.trim();
+    } catch (error) {
+      console.error("Chatbot API request failed", error);
+      return generateOfflineAnswer(prompt);
     }
-    return data.answer as string;
   };
 
   return (

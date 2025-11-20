@@ -234,6 +234,7 @@ const DestinationDetailPage = () => {
                     src={destinationData.images[selectedImage]} 
                     alt={destinationData.name}
                     className="w-full h-full object-cover"
+                    loading="lazy" decoding="async"
                   />
                   <Badge className="absolute top-4 right-4 bg-green-600">
                     {destinationData.status === 'active' ? 'Aktif' : 'Non-aktif'}
@@ -254,6 +255,7 @@ const DestinationDetailPage = () => {
                         src={image} 
                         alt={`${destinationData.name} ${index + 1}`}
                         className="w-full h-full object-cover"
+                        loading="lazy" decoding="async"
                       />
                     </button>
                   ))}

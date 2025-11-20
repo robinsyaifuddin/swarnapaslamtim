@@ -425,7 +425,7 @@ ${notes ? `Catatan: ${notes}` : ''}
                 {selectedPayment === 'qris' && <div className="text-center space-y-4">
                     <h3 className="font-semibold">Scan QR Code untuk Pembayaran</h3>
                     <div className="flex justify-center">
-                      <img src={paymentMethods.qris.image} alt="QR Code" className="w-64 h-64 border rounded-lg" />
+                      <img src={paymentMethods.qris.image} alt="QR Code" className="w-64 h-64 border rounded-lg" loading="lazy" decoding="async" />
                     </div>
                     <p className="text-sm text-gray-600">
                       Scan menggunakan aplikasi e-wallet atau mobile banking Anda

@@ -183,7 +183,7 @@ const InformasiDetail = () => {
 
             {/* Article Image */}
             <div className="mb-8">
-              <img src={article.image} alt={article.title} className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg" />
+              <img src={article.image} alt={article.title} className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg" loading="lazy" decoding="async" />
             </div>
 
             {/* Article Content */}
@@ -251,7 +251,7 @@ const InformasiDetail = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedArticles.map(relatedArticle => <Card key={relatedArticle.id} className="cursor-pointer hover:shadow-lg transition-shadow duration-200" onClick={() => handleRelatedArticleClick(relatedArticle.id)}>
                     <div className="relative overflow-hidden">
-                      <img src={relatedArticle.image} alt={relatedArticle.title} className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" />
+                      <img src={relatedArticle.image} alt={relatedArticle.title} className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async" />
                     </div>
                     <CardContent className="p-4">
                       <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-primary transition-colors">

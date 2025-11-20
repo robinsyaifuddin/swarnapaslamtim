@@ -1,8 +1,6 @@
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { 
   Mail, 
   Phone, 
@@ -15,6 +13,30 @@ import {
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [visits, setVisits] = useState<number>(0);
+  const [pageviews, setPageviews] = useState<number>(0);
+  const loadTimeMs = useMemo(() => {
+    const nav = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    if (nav && nav.length > 0) {
+      return Math.max(0, Math.round(nav[0].duration));
+    }
+    // Fallback for older browsers
+    return Math.max(0, Math.round(performance.now()));
+  }, []);
+  
+  useEffect(() => {
+    try {
+      const totalVisits = Number(localStorage.getItem('swarnapas_total_visits') || '0') + 1;
+      localStorage.setItem('swarnapas_total_visits', String(totalVisits));
+      setVisits(totalVisits);
+
+      const sessionViews = Number(sessionStorage.getItem('swarnapas_session_pageviews') || '0') + 1;
+      sessionStorage.setItem('swarnapas_session_pageviews', String(sessionViews));
+      setPageviews(sessionViews);
+    } catch {
+      // Storage may be unavailable; keep defaults
+    }
+  }, []);
   
   // Function to handle navigation and scroll to top
   const handleNavigation = () => {
@@ -30,7 +52,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <Link to="/" className="flex items-center space-x-3 mb-6 group" onClick={handleNavigation}>
-              <img src="/Logo%20Kabupaten%20Lampung%20Timur.png" alt="Logo Kabupaten Lampung Timur" className="w-10 h-10 object-contain" />
+              <img src="/Logo%20Kabupaten%20Lampung%20Timur.png" alt="Logo Kabupaten Lampung Timur" className="w-10 h-10 object-contain" loading="lazy" decoding="async" />
               <div className="flex flex-col">
                 <span className="text-2xl font-bold text-white group-hover:text-primary transition-colors">
                   Swarnapas
@@ -107,19 +129,21 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="mb-6 text-lg font-bold">Newsletter</h3>
-            <p className="mb-4 text-gray-300">
-              Dapatkan informasi terbaru tentang pariwisata dan acara di Lampung Timur.
-            </p>
-            <div className="flex space-x-2">
-              <Input 
-                type="email" 
-                placeholder="Email Anda" 
-                className="bg-white/10 border-white/20 text-white placeholder:text-gray-400" 
-              />
-              <Button className="bg-primary hover:bg-primary/80">
-                Kirim
-              </Button>
+            <h3 className="mb-6 text-lg font-bold">Analitik Pengunjung</h3>
+            <p className="mb-4 text-gray-300">Ringkasan sederhana berdasarkan perangkat Anda.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg bg-white/5 p-4">
+                <p className="text-sm text-gray-400">Kunjungan</p>
+                <p className="text-2xl font-bold">{visits}</p>
+              </div>
+              <div className="rounded-lg bg-white/5 p-4">
+                <p className="text-sm text-gray-400">Halaman Dilihat</p>
+                <p className="text-2xl font-bold">{pageviews}</p>
+              </div>
+              <div className="rounded-lg bg-white/5 p-4">
+                <p className="text-sm text-gray-400">Waktu Muat</p>
+                <p className="text-2xl font-bold">{loadTimeMs}ms</p>
+              </div>
             </div>
           </div>
         </div>
@@ -139,3 +163,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

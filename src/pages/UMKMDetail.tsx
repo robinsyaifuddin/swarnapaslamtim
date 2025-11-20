@@ -259,7 +259,7 @@ Terima kasih.`;
             <div className="w-full lg:w-1/2">
               <div className="relative rounded-lg overflow-hidden shadow-xl h-[300px] md:h-[400px] bg-gray-200 flex items-center justify-center">
                 {umkm.image ? (
-                  <img src={umkm.image} alt={umkm.name} className="w-full h-full object-cover" />
+                  <img src={umkm.image} alt={umkm.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 ) : (
                   <ImageOff className="h-24 w-24 text-gray-400" />
                 )}
@@ -361,7 +361,7 @@ Terima kasih.`;
                 {umkm.products.map((product: Product) => <Card key={product.id} className="overflow-hidden transition-all duration-300 hover:shadow-lg">
                     <div className="relative h-48 overflow-hidden bg-gray-200 flex items-center justify-center">
                       {product.image ? (
-                        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform hover:scale-105" />
+                        <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform hover:scale-105" loading="lazy" decoding="async" />
                       ) : (
                         <ImageOff className="h-16 w-16 text-gray-400" />
                       )}
@@ -431,7 +431,7 @@ Terima kasih.`;
                   {umkm.reviews.map((review: Review) => <Card key={review.id} className="overflow-hidden transition-all duration-200 hover:shadow-md">
                       <CardContent className="p-6">
                         <div className="flex items-start">
-                          <img src={review.userImage} alt={review.userName} className="w-10 h-10 rounded-full mr-4 object-cover" />
+                          <img src={review.userImage} alt={review.userName} className="w-10 h-10 rounded-full mr-4 object-cover" loading="lazy" decoding="async" />
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <h4 className="font-semibold">{review.userName}</h4>

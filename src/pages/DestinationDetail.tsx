@@ -449,11 +449,11 @@ Terima kasih.`;
             {/* Image Gallery */}
             <div className="w-full lg:w-3/5">
               <div className="rounded-lg overflow-hidden shadow-xl">
-                <img src={activeImage} alt={destination.name} className="w-full h-[300px] md:h-[400px] object-cover" />
+                <img src={activeImage} alt={destination.name} className="w-full h-[300px] md:h-[400px] object-cover" loading="lazy" decoding="async" />
               </div>
               <div className="grid grid-cols-4 gap-2 mt-2">
                 {destination.images.map((image: string, index: number) => <div key={index} className={`rounded-md overflow-hidden cursor-pointer border-2 ${activeImage === image ? 'border-lamsel-blue' : 'border-transparent'}`} onClick={() => handleImageClick(image)}>
-                    <img src={image} alt={`${destination.name} ${index + 1}`} className="w-full h-20 object-cover" />
+                    <img src={image} alt={`${destination.name} ${index + 1}`} className="w-full h-20 object-cover" loading="lazy" decoding="async" />
                   </div>)}
               </div>
             </div>
@@ -614,7 +614,7 @@ Terima kasih.`;
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {destination.relatedTours.map(tour => <Card key={tour.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative h-48">
-                    <img src={tour.image} alt={tour.name} className="w-full h-full object-cover" />
+                    <img src={tour.image} alt={tour.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </div>
                   <CardContent className="p-4">
                     <h3 className="font-bold text-lg mb-2">{tour.name}</h3>
@@ -675,7 +675,7 @@ Terima kasih.`;
               .map((dest) => (
                 <Card key={dest.id} className="flex-shrink-0 w-[300px] overflow-hidden hover:shadow-lg transition-all hover:scale-105 cursor-pointer" onClick={() => navigate(`/destinasi/detail?id=${dest.id}`)}>
                   <div className="relative h-48">
-                    <img src={dest.images[0]} alt={dest.name} className="w-full h-full object-cover" />
+                    <img src={dest.images[0]} alt={dest.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     <Badge className="absolute left-3 top-3 bg-primary text-white hover:bg-primary/90">
                       {dest.category}
                     </Badge>

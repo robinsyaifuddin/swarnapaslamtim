@@ -205,6 +205,7 @@ const UMKMDetailPage = () => {
                     src={umkmData.images[selectedImage]} 
                     alt={umkmData.name}
                     className="w-full h-full object-cover"
+                    loading="lazy" decoding="async"
                   />
                   <Badge className="absolute top-4 right-4 bg-green-600">
                     {umkmData.status === 'active' ? 'Aktif' : 'Non-aktif'}
@@ -225,6 +226,7 @@ const UMKMDetailPage = () => {
                         src={image} 
                         alt={`${umkmData.name} ${index + 1}`}
                         className="w-full h-full object-cover"
+                        loading="lazy" decoding="async"
                       />
                     </button>
                   ))}

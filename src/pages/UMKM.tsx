@@ -181,6 +181,7 @@ const UMKM = () => {
                     src={umkm.image} 
                     alt={umkm.name}
                     className="h-full w-full object-cover transition-transform duration-500 hover:scale-110"
+                    loading="lazy" decoding="async"
                   />
                 ) : (
                   <ImageOff className="h-20 w-20 text-gray-400" />

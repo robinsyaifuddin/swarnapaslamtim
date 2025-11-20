@@ -27,6 +27,13 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { 
   Search, 
   Plus, 
@@ -100,6 +107,15 @@ const reviewDummyData = [
   { id: 205, userName: 'Hendra Wijaya', rating: 4, date: '2024-11-01', comment: 'Terasi udangnya berkualitas, bikin masakan jadi sedap', userImage: 'https://i.pravatar.cc/150?img=7' }
 ];
 
+// Dummy data pendaftar/pengguna untuk admin pusat
+const registeredUsers = [
+  { id: 'U-1001', fullName: 'Rina Saputri', email: 'rina@contoh.com', phone: '628123000111', organization: 'UMKM Batik Sukadana', role: 'umkm', status: 'pending', registeredAt: '2024-11-10' },
+  { id: 'U-1002', fullName: 'Dedi Kurnia', email: 'dedi@contoh.com', phone: '628567000222', organization: 'UMKM Kopi Way Kambas', role: 'umkm', status: 'approved', registeredAt: '2024-11-08' },
+  { id: 'U-1003', fullName: 'Maya Putri', email: 'maya@contoh.com', phone: '628777000333', organization: 'Dinas Pariwisata', role: 'central', status: 'pending', registeredAt: '2024-11-12' },
+  { id: 'U-1004', fullName: 'Bambang Hadi', email: 'bambang@contoh.com', phone: '628811000444', organization: 'UMKM Tapis Lamtim', role: 'umkm', status: 'approved', registeredAt: '2024-11-01' },
+  { id: 'U-1005', fullName: 'Sari Wulandari', email: 'sari@contoh.com', phone: '628131000555', organization: 'Komunitas Wisata', role: 'central', status: 'approved', registeredAt: '2024-10-28' },
+];
+
 const AdminUMKM = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -107,6 +123,9 @@ const AdminUMKM = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [currentTab, setCurrentTab] = useState('manajemen');
   const [showGuide, setShowGuide] = useState(false);
+  const [userStatusTab, setUserStatusTab] = useState<'pending' | 'approved'>('pending');
+  const [showUserDialog, setShowUserDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [formData, setFormData] = useState({
     // General Info
     name: '',
@@ -446,13 +465,18 @@ const AdminUMKM = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
-            <TabsList className="w-full mb-6 grid grid-cols-2 bg-emerald-50">
+            <TabsList className="w-full mb-6 grid grid-cols-3 bg-emerald-50">
               <TabsTrigger value="manajemen" className="flex items-center gap-1">
                 <Store className="h-4 w-4" /> Manajemen
               </TabsTrigger>
               <TabsTrigger value="produk" className="flex items-center gap-1">
                 <Package className="h-4 w-4" /> Produk
               </TabsTrigger>
+              {isCentralAdmin && (
+                <TabsTrigger value="pengguna" className="flex items-center gap-1">
+                  <User className="h-4 w-4" /> Pengguna
+                </TabsTrigger>
+              )}
             </TabsList>
 
             {showGuide && (
@@ -941,17 +965,15 @@ const AdminUMKM = () => {
                       value={formData.description} 
                       onChange={(e) => setFormData({...formData, description: e.target.value})}
                       placeholder="Ceritakan tentang sejarah UMKM, visi misi, dan informasi lengkap lainnya" 
-                      className="min-h-[200px]"
                     />
                   </div>
                 </TabsContent>
-              </form>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
-  );
-};
+                </form>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    };
 
-export default AdminUMKM;
-
+    export default AdminUMKM;
